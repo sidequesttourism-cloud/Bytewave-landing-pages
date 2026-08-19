@@ -1,0 +1,8 @@
+{
+  "name": "bytewave-landing-pages",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs"
+  }
+}
