@@ -74,11 +74,12 @@ body.nav-open{overflow:hidden}
 @media(max-width:500px){.brand>span:last-child{display:none}.menu-label{display:none}.menu-panel{width:100%}.hero-actions .button{min-width:0}}
 
 .brand-3d-logo{overflow:hidden}
-.logo-orbit-copy{position:absolute;inset:1%;z-index:3;width:98%;height:98%;overflow:visible;pointer-events:none;color:var(--navy);animation:logoCopyRotate 28s linear infinite;transform-origin:center}
+.logo-orbit-spinner{position:absolute;inset:1%;z-index:3;width:98%;height:98%;pointer-events:none;transform-origin:50% 50%;animation:logoCopyRotate 16s linear infinite;will-change:transform;backface-visibility:hidden}
+.logo-orbit-copy{display:block;width:100%;height:100%;overflow:visible;color:var(--navy)}
 .logo-orbit-copy path{fill:none;stroke:none}
 .logo-orbit-copy text{fill:currentColor;font:500 13px var(--mono);letter-spacing:.12em;text-transform:uppercase}
 @keyframes logoCopyRotate{to{transform:rotate(360deg)}}
-@media(prefers-reduced-motion:reduce){.logo-orbit-copy{animation:none!important}}
+@media(prefers-reduced-motion:reduce){.logo-orbit-spinner{animation:none!important}}
 
 /* Floating digital surface system */
 body{position:relative;background:#f1f4f2}
@@ -1562,7 +1563,6 @@ html.performance-lite.section-snap-motion main>section.is-section-active>.wrap{
 }
 
 .performance-lite body:after,
-.performance-lite .logo-orbit-copy,
 .performance-lite .system-status span,
 .performance-lite .product-card-shell:before,
 .performance-lite .product-browser:after{
