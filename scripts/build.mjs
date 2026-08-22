@@ -8,7 +8,7 @@ const client = path.join(dist, "client");
 rmSync(dist, { recursive: true, force: true });
 mkdirSync(client, { recursive: true });
 
-for (const item of ["index.html", "assets", "css", "js"]) {
+for (const item of ["index.html", "robots.txt", "sitemap.xml", "assets", "css", "js"]) {
   cpSync(path.join(root, item), path.join(client, item), { recursive: true });
 }
 
