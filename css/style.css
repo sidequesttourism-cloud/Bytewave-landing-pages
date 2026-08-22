@@ -1849,6 +1849,7 @@ html.section-snap-motion main>section.is-section-active>.wrap{
 .site-menu{
   position:fixed;
   inset:0;
+  width:100vw;
   z-index:90;
   display:block;
   visibility:hidden;
@@ -1861,6 +1862,15 @@ html.section-snap-motion main>section.is-section-active>.wrap{
   visibility:visible;
   pointer-events:auto;
   transition-delay:0s;
+}
+.site-header.menu-open .brand,
+.site-header.menu-open .header-actions{
+  position:relative;
+  z-index:130;
+}
+.site-header.menu-open .nav-shell{
+  position:relative;
+  z-index:130;
 }
 .site-menu .menu-backdrop,
 .site-menu.is-open .menu-backdrop{
@@ -1881,18 +1891,18 @@ html.section-snap-motion main>section.is-section-active>.wrap{
 .site-menu .menu-panel,
 .site-menu.is-open .menu-panel{
   position:absolute;
-  inset:0 auto 0 0;
-  width:min(360px,calc(100vw - 24px));
-  height:100dvh;
+  inset:80px auto 0 0;
+  width:min(520px,calc(100vw - 24px));
+  height:calc(100dvh - 80px);
   max-height:none;
   display:flex;
   flex-direction:column;
-  padding:1rem;
+  padding:1.25rem clamp(1.25rem,3vw,2.25rem) clamp(1.5rem,4vw,2.5rem);
   overflow-y:auto;
   color:var(--navy);
   background:rgba(255,255,255,.98)!important;
   border:1px solid rgba(11,42,67,.2)!important;
-  border-radius:0 20px 20px 0;
+  border-radius:0 28px 28px 0;
   box-shadow:0 24px 70px rgba(11,42,67,.22),inset 0 1px 0 #fff!important;
   -webkit-backdrop-filter:blur(18px) saturate(1.1)!important;
   backdrop-filter:blur(18px) saturate(1.1)!important;
@@ -1917,12 +1927,12 @@ html.section-snap-motion main>section.is-section-active>.wrap{
 .menu-close span{font-size:.95rem}
 .site-menu.is-open .menu-panel .nav-links{gap:.3rem}
 .site-menu.is-open .menu-panel .nav-links a{
-  min-height:46px;
-  padding:.55rem .7rem;
+  min-height:clamp(52px,7vh,66px);
+  padding:.7rem 1rem;
   border:0;
   border-radius:11px;
   background:transparent;
-  font-size:1.05rem;
+  font-size:clamp(1.15rem,1.55vw,1.55rem);
   font-weight:500;
   opacity:1;
   transform:none;
@@ -1937,7 +1947,7 @@ html.section-snap-motion main>section.is-section-active>.wrap{
 }
 .site-menu.is-open .menu-panel .nav-links a i{opacity:.7;transform:none}
 .menu-foot{
-  margin-top:.75rem;
+  margin-top:auto;
   padding:.8rem .35rem .15rem;
   gap:.25rem;
   font-size:.62rem;
@@ -1946,12 +1956,16 @@ html.section-snap-motion main>section.is-section-active>.wrap{
 @media(max-width:820px){
   .site-menu .menu-panel,
   .site-menu.is-open .menu-panel{
-    inset:0 auto 0 0;
-    width:min(360px,calc(100vw - 24px));
-    height:100dvh;
+    inset:76px auto 0 0;
+    width:calc(100vw - 18px);
+    height:calc(100dvh - 76px);
     max-height:none;
-    padding-top:1.25rem;
-    border-radius:0 18px 18px 0;
+    padding:1rem 1rem 1.25rem;
+    border-radius:0 22px 22px 0;
+  }
+  .site-menu.is-open .menu-panel .nav-links a{
+    min-height:clamp(50px,7.4vh,64px);
+    font-size:clamp(1.15rem,5vw,1.45rem);
   }
 }
 
@@ -1966,6 +1980,13 @@ html.section-snap-motion main>section.is-section-active>.wrap{
     place-items:center;
     line-height:1;
   }
+}
+
+/* Keep Android vertical page scrolling available over the product carousel. */
+.product-carousel,
+.product-viewport,
+.product-carousel.is-enhanced .product.is-active{
+  touch-action:pan-y pinch-zoom;
 }
 
 /* Consistent medium typography: substantial without looking bold. */

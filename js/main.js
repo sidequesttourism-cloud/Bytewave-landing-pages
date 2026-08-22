@@ -377,8 +377,18 @@
       else if (event.key === 'End') goToProduct(cards.length - 1, 'next');
       else goToProduct(productIndex + (event.key === 'ArrowRight' ? 1 : -1), event.key === 'ArrowRight' ? 'next' : 'prev');
     });
-    viewport?.addEventListener('pointerdown', (event) => { pointerStartX = event.clientX; });
+    viewport?.addEventListener('pointerdown', (event) => {
+      if (event.pointerType === 'touch') {
+        pointerStartX = 0;
+        return;
+      }
+      pointerStartX = event.clientX;
+    });
     viewport?.addEventListener('pointerup', (event) => {
+      if (event.pointerType === 'touch') {
+        pointerStartX = 0;
+        return;
+      }
       const distance = event.clientX - pointerStartX;
       pointerStartX = 0;
       if (Math.abs(distance) < 52) return;
