@@ -3,6 +3,17 @@
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const mobileLayout = window.matchMedia('(max-width: 820px)');
+  const desktopSnapLayout = window.matchMedia('(min-width: 1024px) and (pointer: fine)');
+  const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  const performanceLite = Boolean(
+    connection?.saveData ||
+    mobileLayout.matches ||
+    (navigator.deviceMemory && navigator.deviceMemory <= 4) ||
+    (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4)
+  );
+  const sectionSnapEnabled = () => !performanceLite && !reducedMotion.matches && desktopSnapLayout.matches;
+  document.documentElement.classList.toggle('performance-lite', performanceLite);
   const header = $('[data-header]');
   const toggle = $('.menu-toggle');
   const menu = $('#site-menu');
@@ -11,6 +22,7 @@
   const setMenu = (open) => {
     if (!toggle || !menu || !header) return;
     toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu');
     menu.setAttribute('aria-hidden', String(!open));
     menu.classList.toggle('is-open', open);
     header.classList.toggle('menu-open', open);
@@ -24,7 +36,7 @@
 
   const navLinks = $$('.nav-links a');
   const sections = $$('main section[id]');
-  if (!reducedMotion.matches) {
+  if (sectionSnapEnabled()) {
     sections[0]?.classList.add('is-section-active');
     sections.forEach((section, index) => section.classList.toggle('is-section-future', index > 0));
     document.documentElement.classList.add('section-snap-motion');
@@ -48,10 +60,16 @@
     sections.forEach((section) => sectionObserver.observe(section));
   }
   const onSectionMotionChange = () => {
-    document.documentElement.classList.toggle('section-snap-motion', !reducedMotion.matches);
-    if (reducedMotion.matches) sections.forEach((section) => section.classList.add('is-section-active'));
+    const naturalScroll = !sectionSnapEnabled();
+    document.documentElement.classList.toggle('section-snap-motion', !naturalScroll);
+    if (naturalScroll) sections.forEach((section) => {
+      section.classList.add('is-section-active');
+      section.classList.remove('is-section-past', 'is-section-future');
+    });
   };
   reducedMotion.addEventListener?.('change', onSectionMotionChange);
+  mobileLayout.addEventListener?.('change', onSectionMotionChange);
+  desktopSnapLayout.addEventListener?.('change', onSectionMotionChange);
 
   const sectionStops = [...sections, $('.site-footer')].filter(Boolean);
   let sectionSnapLocked = false;
@@ -77,7 +95,7 @@
     window.clearTimeout(sectionSnapTimer);
     sectionSnapTimer = window.setTimeout(() => { sectionSnapLocked = false; }, 900);
   };
-  const sectionSnapBlocked = (target) => reducedMotion.matches || document.body.classList.contains('dialog-open') || document.body.classList.contains('nav-open') || Boolean(target?.closest('input,select,textarea,[contenteditable=true],dialog'));
+  const sectionSnapBlocked = (target) => !sectionSnapEnabled() || document.body.classList.contains('dialog-open') || document.body.classList.contains('nav-open') || Boolean(target?.closest('input,select,textarea,[contenteditable=true],dialog'));
   const panelCanScroll = (panel, direction) => {
     if (!panel || panel.scrollHeight <= panel.clientHeight + 2) return false;
     return direction > 0 ? panel.scrollTop < panel.scrollHeight - panel.clientHeight - 2 : panel.scrollTop > 2;
@@ -111,7 +129,7 @@
     const position = window.scrollY;
     const delta = position - lastSectionScrollY;
     lastSectionScrollY = position;
-    if (sectionSnapLocked || reducedMotion.matches || Math.abs(delta) < 1) return;
+    if (sectionSnapLocked || !sectionSnapEnabled() || Math.abs(delta) < 1) return;
     if (!sectionGestureActive) {
       sectionGestureActive = true;
       sectionGestureStart = currentSectionIndex();
@@ -374,9 +392,9 @@
   }
 
   const insights = {
-    brunei: { label: 'Field Note / 01', title: 'Why Brunei-first digital products matter', body: '<p>Products become more useful when they begin with the people, behaviours, and conditions they are meant to serve. Brunei-first thinking gives teams a sharper starting point: familiar problems, reachable users, and context that global templates often miss.</p><p>That does not mean thinking small. A well-made local product can establish trust, prove its value, and develop the strong foundations needed to grow beyond its first market.</p>' },
-    msme: { label: 'Field Note / 02', title: 'What MSMEs need from a software partner', body: '<p>For an MSME, technology should reduce friction—not introduce a new layer of it. The right partner explains choices clearly, works within real operating constraints, and focuses investment on the moments that make the biggest difference.</p><p>Good software partnerships are measured in useful outcomes: time returned to the team, a clearer customer journey, fewer manual errors, and a product that can evolve without being rebuilt from zero.</p>' },
-    tourism: { label: 'Field Note / 03', title: 'How tourism technology can lift local experiences', body: '<p>Technology is at its best when it helps people notice more: an overlooked place, a local story, a small business, or an experience they would not otherwise find.</p><p>For Brunei, thoughtful discovery tools can connect visitors and residents with the character already present here. The opportunity is not to digitise a brochure, but to make local exploration easier, richer, and more connected.</p>' }
+    brunei: { label: 'Local products', title: 'Why Brunei-first digital products matter', body: '<p>When you know the place, you notice details that an off-the-shelf template will miss. You understand how people communicate, what slows them down, and what would make a new tool feel familiar rather than forced.</p><p>Starting in Brunei is not about limiting an idea. It is about giving it a real community to learn from. If it earns trust and proves useful here, it has a much stronger base from which to grow.</p>' },
+    msme: { label: 'Working together', title: 'What MSMEs need from a software partner', body: '<p>Most small businesses do not need more technology for its own sake. They need fewer repetitive jobs, fewer mistakes, and a smoother experience for their customers and staff.</p><p>A useful software partner should be easy to talk to. They should understand the budget, explain the trade-offs honestly, and focus on the change that will make the biggest difference first.</p>' },
+    tourism: { label: 'Tourism', title: 'How tourism technology can lift local experiences', body: '<p>Some of Brunei’s best experiences are easy to miss unless someone tells you where to look. A thoughtful digital guide can help a local story, family business, favourite food spot, or quiet place reach the people who would appreciate it.</p><p>The aim is not to put another brochure on a screen. It is to make exploring feel personal and help people understand the character behind each place.</p>' }
   };
   const dialog = $('.insight-dialog');
   $$('[data-insight]').forEach((button) => button.addEventListener('click', () => {
@@ -427,12 +445,13 @@
     let renderer;
     try {
       const mobile = window.matchMedia('(max-width: 700px)').matches;
+      const lite = performanceLite || mobile;
       const scene = new THREE.Scene();
       scene.fog = new THREE.FogExp2(0xf1f4f2, .028);
       const camera = new THREE.PerspectiveCamera(34, 1, .1, 100);
       camera.position.z = 12;
-      renderer = new THREE.WebGLRenderer({ alpha: true, antialias: !mobile, powerPreference: mobile ? 'low-power' : 'high-performance' });
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+      renderer = new THREE.WebGLRenderer({ alpha: true, antialias: !lite, precision: lite ? 'mediump' : 'highp', powerPreference: lite ? 'low-power' : 'high-performance' });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, lite ? 1 : 1.35));
       renderer.setClearColor(0xf1f4f2, 1);
       renderer.outputEncoding = THREE.sRGBEncoding;
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -445,7 +464,7 @@
     const logoClearRadius = mobile ? 2.92 : 3.08;
 
       const nodePositions = [];
-      const nodeStep = mobile ? 1.25 : .9;
+      const nodeStep = lite ? 1.55 : .9;
       for (let x = -4.2; x <= 4.2; x += nodeStep) for (let y = -4.2; y <= 4.2; y += nodeStep) {
         if (Math.hypot(x, y) > logoClearRadius + .12 && (Math.round((x + y) * 10) % 3) === 0) nodePositions.push(x, y, -1.42);
       }
@@ -464,8 +483,8 @@
       const glossyGroup = new THREE.Group();
       const floatingObjects = [];
       const glossyGeometries = [
-        new THREE.SphereGeometry(.12, mobile ? 10 : 16, mobile ? 7 : 12),
-        new THREE.SphereGeometry(.08, mobile ? 8 : 14, mobile ? 6 : 10),
+        new THREE.SphereGeometry(.12, lite ? 8 : 16, lite ? 6 : 12),
+        new THREE.SphereGeometry(.08, lite ? 7 : 14, lite ? 5 : 10),
         new THREE.IcosahedronGeometry(.1, 0)
       ];
       const glossyMaterials = [0x0b6f91, 0x2a9fbd, 0x0b5273, 0x65bfd3].map((color) => new THREE.MeshPhysicalMaterial({
@@ -486,7 +505,7 @@
         [-.7, -.08, -.95, .95], [.75, -.4, -1.05, .62], [1.8, .05, -1.2, .85],
         [2.85, -.32, -1.08, .68], [4.05, -.62, -1.22, .8], [3.45, .48, -1.38, .48]
       ];
-      objectSpecs.slice(0, mobile ? 5 : objectSpecs.length).forEach(([x, y, z, scale], index) => {
+      objectSpecs.slice(0, lite ? 4 : objectSpecs.length).forEach(([x, y, z, scale], index) => {
         const object = new THREE.Mesh(glossyGeometries[index % glossyGeometries.length], glossyMaterials[index % glossyMaterials.length]);
         object.position.set(x, y, z);
         object.scale.setScalar(scale);
@@ -497,7 +516,7 @@
       backgroundGroup.add(glossyGroup);
 
       const createWaveLayer = (color, lineColor, opacity, lineOpacity, z, phase, rotation) => {
-        const geometry = new THREE.PlaneGeometry(18, 6, mobile ? 16 : 28, mobile ? 6 : 9);
+        const geometry = new THREE.PlaneGeometry(18, 6, lite ? 12 : 28, lite ? 4 : 9);
         const positions = geometry.attributes.position;
         const base = new Float32Array(positions.count * 2);
         for (let index = 0; index < positions.count; index++) {
@@ -536,8 +555,8 @@
         return mesh;
       };
       const waveLayers = [
-        createWaveLayer(0xadd6df, 0x176f8f, mobile ? .18 : .26, mobile ? .16 : .23, -2.65, 0, -.025),
-        createWaveLayer(0xc7dce1, 0x4a8da4, mobile ? .11 : .17, mobile ? .07 : .11, -3.2, 2.1, .045)
+        createWaveLayer(0xadd6df, 0x176f8f, lite ? .18 : .26, lite ? .16 : .23, -2.65, 0, -.025),
+        createWaveLayer(0xc7dce1, 0x4a8da4, lite ? .11 : .17, lite ? .07 : .11, -3.2, 2.1, .045)
       ];
 
       renderer.domElement.className = 'webgl-background';
@@ -546,11 +565,14 @@
 
       let width = 0, height = 0, raf = 0, visible = true, scrollTarget = 0, scrollCurrent = 0;
       let pointerX = 0, pointerY = 0, pointerTargetX = 0, pointerTargetY = 0;
-      let frameCount = 0;
+      let frameCount = 0, lastFrameTime = 0;
+      const frameInterval = 1000 / (lite ? 24 : 50);
       const requestRender = () => { if (!raf && visible && !document.hidden) raf = requestAnimationFrame(render); };
       const render = (time = 0) => {
         raf = 0;
         if (!visible || document.hidden) return;
+        if (!reducedMotion.matches && time - lastFrameTime < frameInterval) { requestRender(); return; }
+        lastFrameTime = time;
         if (reducedMotion.matches) {
           backgroundGroup.position.z = 0; backgroundGroup.rotation.set(0, 0, 0);
           glossyGroup.rotation.set(0, 0, 0);
@@ -581,7 +603,7 @@
               positions.setZ(index, displacement);
             }
             positions.needsUpdate = true;
-            if (frameCount % (mobile ? 4 : 2) === layerIndex) wave.geometry.computeVertexNormals();
+            if (!lite && frameCount % 2 === layerIndex) wave.geometry.computeVertexNormals();
             wave.position.y = -1.8 + Math.sin(time * .00014 + phase) * .14 - scrollCurrent * .32;
             wave.rotation.z += ((layerIndex ? .055 : -.035) + scrollCurrent * (layerIndex ? -.08 : .1) - wave.rotation.z) * .035;
           });
@@ -597,22 +619,26 @@
         renderer.setSize(width, height, false); camera.aspect = width / height; camera.updateProjectionMatrix(); requestRender();
       };
       const onScroll = () => {
-        if (reducedMotion.matches) return;
+        if (reducedMotion.matches || lite) return;
         const scrollRange = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
         scrollTarget = Math.max(0, Math.min(1, window.scrollY / scrollRange));
         requestRender();
       };
       const onMotionChange = () => { scrollTarget = 0; scrollCurrent = 0; requestRender(); };
       const onPointerMove = (event) => {
-        if (reducedMotion.matches) return;
+        if (reducedMotion.matches || lite) return;
         pointerTargetX = (event.clientX / Math.max(1, window.innerWidth) - .5) * 2;
         pointerTargetY = (event.clientY / Math.max(1, window.innerHeight) - .5) * 2;
         requestRender();
       };
       const onPointerLeave = () => { pointerTargetX = 0; pointerTargetY = 0; requestRender(); };
       const onVisibility = () => { if (!document.hidden) requestRender(); };
-      window.addEventListener('resize', resize, { passive: true }); window.addEventListener('scroll', onScroll, { passive: true });
-      window.addEventListener('pointermove', onPointerMove, { passive: true }); window.addEventListener('pointerleave', onPointerLeave);
+      window.addEventListener('resize', resize, { passive: true });
+      if (!lite) {
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('pointermove', onPointerMove, { passive: true });
+        window.addEventListener('pointerleave', onPointerLeave);
+      }
       reducedMotion.addEventListener?.('change', onMotionChange); document.addEventListener('visibilitychange', onVisibility);
       resize(); onScroll();
       requestRender();

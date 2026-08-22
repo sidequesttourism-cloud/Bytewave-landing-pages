@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=20260820-10">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
   <script src="js/main.js" defer></script>
 </head>
@@ -20,19 +20,25 @@
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header" data-header>
     <nav class="nav-shell" aria-label="Primary navigation">
-      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-menu">
-        <span class="menu-icon" aria-hidden="true"><i></i><i></i><i></i></span><span class="menu-label">Menu</span>
-      </button>
       <a class="brand" href="#home" aria-label="ByteWave Digital, home">
         <span class="brand-mark" aria-hidden="true"><img src="assets/bytewave-logo-transparent.png" alt="" width="40" height="40"></span>
         <span>ByteWave Digital</span>
       </a>
-      <a class="header-project" href="#contact"><span aria-hidden="true"></span> Start a Project</a>
+      <div class="header-actions">
+        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-menu" aria-label="Open navigation menu">
+          <span class="menu-label">Menu</span>
+          <svg class="menu-icon" viewBox="0 0 18 18" width="18" height="18" aria-hidden="true" focusable="false">
+            <circle cx="5" cy="5" r="1.5"></circle><circle cx="13" cy="5" r="1.5"></circle>
+            <circle cx="5" cy="13" r="1.5"></circle><circle cx="13" cy="13" r="1.5"></circle>
+          </svg>
+        </button>
+        <a class="header-project" href="#contact">Start a Project <span aria-hidden="true">↗</span></a>
+      </div>
       <div class="site-menu" id="site-menu" aria-hidden="true">
         <div class="menu-backdrop" data-menu-close></div>
         <div class="menu-panel">
           <button class="menu-close" type="button" data-menu-close><span aria-hidden="true">×</span> Close</button>
-          <p class="eyebrow">Navigate / ByteWave</p>
+          <p class="eyebrow">Explore ByteWave</p>
           <div class="nav-links">
             <a href="#home" class="is-active"><span>Home</span><i aria-hidden="true">↗</i></a>
             <a href="#about"><span>About</span><i aria-hidden="true">↗</i></a>
@@ -51,14 +57,14 @@
     <section class="hero" id="home" aria-labelledby="hero-title">
       <div class="hero-grid wrap">
         <div class="hero-copy">
-          <p class="eyebrow">Brunei / Digital Enterprise</p>
-          <h1 id="hero-title">Building digital products for ideas ready to move forward.</h1>
-          <p class="hero-intro">ByteWave Digital Enterprise creates practical software, digital products, and technology experiences for startups, MSMEs, organisations, and entrepreneurs in Brunei.</p>
+          <p class="eyebrow">A digital company from Brunei</p>
+          <h1 id="hero-title">We turn ideas into digital products.</h1>
+          <p class="hero-intro">Got an idea that deserves to exist? We can help you shape it, build it, and get it into the hands of real people. We make websites, software, and digital products here in Brunei.</p>
           <div class="hero-actions">
             <a class="button button-primary" href="#contact">Start a Project <span aria-hidden="true">↗</span></a>
             <a class="button button-quiet" href="#products">Explore Our Work <span aria-hidden="true">↓</span></a>
           </div>
-          <p class="system-status"><span aria-hidden="true"></span> System online / Est. 2026 / Brunei</p>
+          <p class="system-status"><span aria-hidden="true"></span> Online and building in Brunei</p>
         </div>
         <div class="hero-visual" aria-label="Interactive ByteWave Digital Enterprise identity">
           <div class="brand-3d-logo" data-logo-stage>
@@ -79,17 +85,16 @@
     <section class="section about" id="about" aria-labelledby="about-title">
       <div class="wrap">
         <div class="section-heading reveal">
-          <p class="eyebrow">01 / About</p>
-          <h2 id="about-title">Built in Brunei.<br>Designed to be useful.</h2>
-          <p>We turn practical ideas into dependable digital products and software. Our work brings clear thinking, considered design, and capable technology together—without unnecessary complexity.</p>
+          <div class="section-heading-main"><h2 id="about-title">About us</h2><p class="section-tagline">Made in Brunei. Built for real life.</p></div>
+          <p class="section-description">ByteWave Digital Enterprise is a small Brunei team with a genuine interest in how technology can make work and everyday life better. We take time to understand the problem, speak plainly, and make things people will actually want to use.</p>
         </div>
         <div class="pillar-carousel" data-pillar-carousel aria-roledescription="carousel" aria-label="ByteWave business pillars">
           <div class="pillar-viewport" data-pillar-viewport tabindex="0" aria-label="Business pillar slides">
             <div class="pillar-grid">
-              <article class="pillar reveal" aria-label="1 of 4"><span>01</span><h3>Product platforms</h3><p>Focused digital products created around real local needs and opportunities.</p></article>
-              <article class="pillar reveal" aria-label="2 of 4"><span>02</span><h3>IT consulting</h3><p>Clear technology guidance for organisations making important digital decisions.</p></article>
-              <article class="pillar reveal" aria-label="3 of 4"><span>03</span><h3>Software solutions</h3><p>Purpose-built systems that improve workflows, access, and everyday operations.</p></article>
-              <article class="pillar reveal" aria-label="4 of 4"><span>04</span><h3>CSR &amp; community</h3><p>Digital initiatives that support skills, participation, and Brunei's wider ecosystem.</p></article>
+              <article class="pillar reveal" aria-label="1 of 4"><h3>Product platforms</h3><p>We spot useful ideas close to home and turn them into products that can grow over time.</p></article>
+              <article class="pillar reveal" aria-label="2 of 4"><h3>IT consulting</h3><p>Not sure which way to go? We help you weigh the options and choose what makes sense for your team.</p></article>
+              <article class="pillar reveal" aria-label="3 of 4"><h3>Software solutions</h3><p>We build around the way you work, replacing awkward steps with tools that feel straightforward.</p></article>
+              <article class="pillar reveal" aria-label="4 of 4"><h3>CSR &amp; community</h3><p>We want more people in Brunei to feel confident taking part in the digital economy.</p></article>
             </div>
           </div>
           <div class="pillar-controls">
@@ -105,20 +110,20 @@
     <section class="section services" id="services" aria-labelledby="services-title">
       <div class="wrap">
         <div class="section-heading section-heading-split reveal">
-          <div><p class="eyebrow">02 / Capabilities</p><h2 id="services-title">Practical capability.<br>End-to-end clarity.</h2></div>
-          <p>From early product thinking to reliable deployment, we shape the right approach for the problem—not a one-size-fits-all package.</p>
+          <div class="section-heading-main"><h2 id="services-title">What we do</h2><p class="section-tagline">Ways we can help you build.</p></div>
+          <p class="section-description">You might have a sketch, a frustrating process, or an existing product that needs attention. Wherever you are starting from, we will meet you there.</p>
         </div>
         <div class="service-carousel reveal" data-service-carousel aria-roledescription="carousel" aria-label="ByteWave capabilities">
           <div class="service-viewport" data-service-viewport tabindex="0" aria-label="Capability 1 of 8">
             <div class="service-grid">
-              <article class="service-card" aria-label="1 of 8"><h3>Web development</h3><p>Fast, accessible websites and platforms built for real-world use.</p></article>
-              <article class="service-card" aria-label="2 of 8"><h3>Software development</h3><p>Custom applications and systems aligned with how your organisation works.</p></article>
-              <article class="service-card" aria-label="3 of 8"><h3>UI/UX design</h3><p>Clear interfaces and user journeys grounded in research and usability.</p></article>
-              <article class="service-card" aria-label="4 of 8"><h3>AI &amp; automation</h3><p>Responsible automation that removes repetitive work and adds practical value.</p></article>
-              <article class="service-card" aria-label="5 of 8"><h3>Data &amp; analytics</h3><p>Useful reporting, dashboards, and data foundations for better decisions.</p></article>
-              <article class="service-card" aria-label="6 of 8"><h3>Digital transformation</h3><p>Measured improvements to tools, processes, and digital service delivery.</p></article>
-              <article class="service-card" aria-label="7 of 8"><h3>Cloud &amp; deployment</h3><p>Secure, maintainable infrastructure designed to scale with purpose.</p></article>
-              <article class="service-card" aria-label="8 of 8"><h3>Product strategy &amp; consulting</h3><p>Roadmaps and validation that turn an idea into an achievable next move.</p></article>
+              <article class="service-card" aria-label="1 of 8"><h3>Web development</h3><p>Websites and platforms that load quickly, feel intuitive, and work across devices.</p></article>
+              <article class="service-card" aria-label="2 of 8"><h3>Software development</h3><p>Custom applications shaped around how your team really works.</p></article>
+              <article class="service-card" aria-label="3 of 8"><h3>UI/UX design</h3><p>Thoughtful interfaces that help people find their way without friction.</p></article>
+              <article class="service-card" aria-label="4 of 8"><h3>AI &amp; automation</h3><p>Sensible automation for repetitive tasks, with people kept in control.</p></article>
+              <article class="service-card" aria-label="5 of 8"><h3>Data &amp; analytics</h3><p>Clear dashboards and reporting that help you see what matters.</p></article>
+              <article class="service-card" aria-label="6 of 8"><h3>Digital transformation</h3><p>Practical improvements to the tools and processes your team uses every day.</p></article>
+              <article class="service-card" aria-label="7 of 8"><h3>Cloud &amp; deployment</h3><p>Reliable foundations that are secure, maintainable, and ready to grow.</p></article>
+              <article class="service-card" aria-label="8 of 8"><h3>Product strategy &amp; consulting</h3><p>A clear plan for turning an early idea into a realistic next step.</p></article>
             </div>
           </div>
           <div class="service-controls" aria-label="Capability carousel controls">
@@ -131,12 +136,12 @@
 
     <section class="section products" id="products" aria-labelledby="products-title">
       <div class="wrap">
-        <div class="section-heading reveal"><p class="eyebrow">03 / Featured Products</p><h2 id="products-title">Idea become Reality</h2></div>
+        <div class="section-heading reveal"><div class="section-heading-main"><h2 id="products-title">Our products</h2><p class="section-tagline">Ideas shaped by life in Brunei.</p></div></div>
         <div class="product-carousel reveal" data-product-carousel role="region" aria-roledescription="carousel" aria-label="Featured ByteWave products">
           <div class="product-viewport" data-product-viewport tabindex="0">
             <article class="product product-sidequest is-active" data-product-slide aria-label="SideQuest.BN, product 1 of 2">
-              <div class="product-index"><span>Product / 01</span><span class="product-status">Early Access</span></div>
-              <div class="product-body"><div class="product-copy"><p class="product-kicker">A ByteWave-owned digital platform</p><h3>SideQuest<span>.BN</span></h3><p>A platform being shaped around local participation, practical discovery, and the opportunities that sit beyond the usual path.</p><div class="product-chips" aria-label="Product attributes"><span>Local platform</span><span>Early access</span></div></div></div>
+              <div class="product-index"><span class="product-status">Early Access</span></div>
+              <div class="product-body"><div class="product-copy"><p class="product-kicker">A ByteWave-owned digital platform</p><h3>SideQuest<span>.BN</span></h3><p>SideQuest.BN began with a simple question: what interesting things are happening nearby that people never hear about? We are building a place to make those opportunities easier to find.</p><div class="product-chips" aria-label="Product attributes"><span>Local platform</span><span>Early access</span></div></div></div>
               <div class="product-showcase" aria-hidden="true">
                 <div class="product-browser product-browser-sidequest">
                   <div class="browser-chrome"><span><i></i><i></i><i></i></span><b>sidequest.bn</b><em></em></div>
@@ -152,8 +157,8 @@
               </div>
             </article>
             <article class="product product-tourism" data-product-slide aria-label="SideQuest Tourism, product 2 of 2">
-              <div class="product-index"><span>Product / 02</span><span class="product-status">Concept Stage</span></div>
-              <div class="product-body"><div class="product-copy"><p class="product-kicker">Tourism technology concept</p><h3>SideQuest <span>Tourism</span></h3><p>A developing concept focused on helping people discover local places, experiences, and stories in more meaningful ways.</p><div class="product-chips" aria-label="Product attributes"><span>Tourism technology</span><span>Concept stage</span></div></div></div>
+              <div class="product-index"><span class="product-status">Concept Stage</span></div>
+              <div class="product-body"><div class="product-copy"><p class="product-kicker">Tourism technology concept</p><h3>SideQuest <span>Tourism</span></h3><p>We are exploring a more personal way to discover Brunei: through the places, people, food, and stories that give each area its character.</p><div class="product-chips" aria-label="Product attributes"><span>Tourism technology</span><span>Concept stage</span></div></div></div>
               <div class="product-showcase product-showcase-tourism" aria-hidden="true">
                 <div class="product-browser product-browser-tourism">
                   <div class="browser-chrome"><span><i></i><i></i><i></i></span><b>explore.sidequest.bn</b><em></em></div>
@@ -186,23 +191,23 @@
 
     <section class="section process" id="process" aria-labelledby="process-title">
       <div class="wrap">
-        <div class="section-heading section-heading-split reveal"><div><p class="eyebrow">04 / Process</p><h2 id="process-title">A clear route from<br>question to outcome.</h2></div><p>Our process stays collaborative and visible, with decisions made at the right time and progress you can understand.</p></div>
+        <div class="section-heading section-heading-split reveal"><div class="section-heading-main"><h2 id="process-title">How we work</h2><p class="section-tagline">We build it with you.</p></div><p class="section-description">No disappearing into a black box. We share the work as it develops, explain the choices in plain language, and make the important decisions together.</p></div>
         <ol class="process-line">
-          <li class="reveal"><span>01</span><h3>Discover</h3><p>Understand the context, users, priorities, and constraints.</p></li>
-          <li class="reveal"><span>02</span><h3>Define</h3><p>Set the direction, scope, success measures, and roadmap.</p></li>
-          <li class="reveal"><span>03</span><h3>Design</h3><p>Shape and test an experience that makes the complex feel clear.</p></li>
-          <li class="reveal"><span>04</span><h3>Deliver</h3><p>Build, validate, launch, and support the product with care.</p></li>
+          <li class="reveal"><h3>Discover</h3><p>We start by listening. What is happening now, who is it for, and what would genuinely help?</p></li>
+          <li class="reveal"><h3>Define</h3><p>We decide what matters most and agree on a plan that fits your time and budget.</p></li>
+          <li class="reveal"><h3>Design</h3><p>We turn the plan into something you can see, try, and improve before the full build.</p></li>
+          <li class="reveal"><h3>Deliver</h3><p>We build, test, and launch it properly. Once it is live, we are still here when you need us.</p></li>
         </ol>
       </div>
     </section>
 
     <section class="section insights" id="insights" aria-labelledby="insights-title">
       <div class="wrap">
-        <div class="section-heading reveal"><p class="eyebrow">05 / Insights</p><h2 id="insights-title">Thinking in public.</h2></div>
+        <div class="section-heading reveal"><div class="section-heading-main"><h2 id="insights-title">From our notebook</h2><p class="section-tagline">A few things on our minds.</p></div></div>
         <div class="insight-list">
-          <article class="insight reveal"><span>Field Note / 01</span><h3>Why Brunei-first digital products matter</h3><p>Local context can be a product advantage—not a limitation.</p><button type="button" data-insight="brunei">Read insight <span aria-hidden="true">↗</span></button></article>
-          <article class="insight reveal"><span>Field Note / 02</span><h3>What MSMEs need from a software partner</h3><p>Clarity, adaptability, and useful outcomes matter more than technical theatre.</p><button type="button" data-insight="msme">Read insight <span aria-hidden="true">↗</span></button></article>
-          <article class="insight reveal"><span>Field Note / 03</span><h3>How tourism technology can lift local experiences</h3><p>Good technology helps a place reveal more of itself.</p><button type="button" data-insight="tourism">Read insight <span aria-hidden="true">↗</span></button></article>
+          <article class="insight reveal"><span>Local products</span><h3>Why Brunei-first digital products matter</h3><p>Knowing the place and the people gives a product a much better starting point.</p><button type="button" data-insight="brunei">Read insight <span aria-hidden="true">↗</span></button></article>
+          <article class="insight reveal"><span>Working together</span><h3>What MSMEs need from a software partner</h3><p>Honest advice is far more useful than a long list of technical terms.</p><button type="button" data-insight="msme">Read insight <span aria-hidden="true">↗</span></button></article>
+          <article class="insight reveal"><span>Tourism</span><h3>How tourism technology can lift local experiences</h3><p>Sometimes the best local stories are the ones people simply have not found yet.</p><button type="button" data-insight="tourism">Read insight <span aria-hidden="true">↗</span></button></article>
         </div>
       </div>
     </section>
@@ -210,9 +215,9 @@
     <section class="section contact" id="contact" aria-labelledby="contact-title">
       <div class="wrap contact-grid">
         <div class="contact-copy reveal">
-          <p class="eyebrow">06 / Start a Conversation</p>
-          <h2 id="contact-title">Have an idea ready<br>to move forward?</h2>
-          <p>Tell us what you are exploring. We will listen, ask the useful questions, and help identify a practical next step.</p>
+          <h2 id="contact-title">Let’s talk</h2>
+          <p class="section-tagline">Got something in mind?</p>
+          <p class="section-description">It does not need to be a finished brief. Tell us what you are trying to do, what is getting in the way, or simply what you have been thinking about. We will take it from there with you.</p>
           <address>
             <a href="mailto:Aziq.bytewavedigital@gmail.com">Aziq.bytewavedigital@gmail.com</a>
             <a href="tel:+6738194908">+673 819 4908</a>
@@ -233,11 +238,11 @@
 
   <footer class="site-footer">
     <div class="wrap footer-top"><a class="brand footer-brand" href="#home"><span class="brand-mark" aria-hidden="true"><img src="assets/bytewave-logo-transparent.png" alt="" width="40" height="40"></span><span>ByteWave Digital Enterprise</span></a><p>Ideas into Digital Reality.</p></div>
-    <div class="wrap footer-bottom"><span>© <span data-year></span> ByteWave Digital Enterprise</span><span>Bandar Seri Begawan / Brunei</span><a href="#home">Back to top ↑</a></div>
+    <div class="wrap footer-bottom"><span>© <span data-year></span> ByteWave Digital Enterprise</span><span>Bandar Seri Begawan, Brunei</span><a href="#home">Back to top ↑</a></div>
   </footer>
 
   <dialog class="insight-dialog" aria-labelledby="dialog-title">
-    <div class="dialog-bar"><span>ByteWave / Field Note</span><button type="button" data-dialog-close aria-label="Close insight">Close ×</button></div>
+    <div class="dialog-bar"><span>ByteWave notebook</span><button type="button" data-dialog-close aria-label="Close insight">Close ×</button></div>
     <div class="dialog-content"><p class="eyebrow" data-dialog-label></p><h2 id="dialog-title" data-dialog-title></h2><div data-dialog-body></div></div>
   </dialog>
 </body>
