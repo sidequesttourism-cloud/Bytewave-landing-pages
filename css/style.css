@@ -1811,27 +1811,39 @@ html.section-snap-motion main>section.is-section-active>.wrap{
   border-color:var(--navy);
 }
 .nav-shell .menu-icon{
-  width:16px;
-  height:16px;
+  width:18px;
+  height:14px;
   display:grid!important;
   place-items:center;
   fill:none;
 }
 .nav-shell .menu-icon i{
   display:block;
-  width:8px;
-  height:8px;
+  width:18px;
+  height:2px;
   margin:0;
-  background:transparent;
-  border-right:1.75px solid currentColor;
-  border-bottom:1.75px solid currentColor;
-  border-radius:1px;
-  transform:translateY(-2px) rotate(45deg)!important;
+  position:relative;
+  background:currentColor;
+  border:0;
+  border-radius:999px;
+  transform:none!important;
   transform-origin:center;
-  transition:transform .22s ease!important;
+  transition:background .22s ease!important;
 }
+.nav-shell .menu-icon i::before,
+.nav-shell .menu-icon i::after{
+  content:"";
+  position:absolute;
+  left:0;
+  width:18px;
+  height:2px;
+  border-radius:999px;
+  background:currentColor;
+}
+.nav-shell .menu-icon i::before{top:-5px}
+.nav-shell .menu-icon i::after{top:5px}
 .nav-shell .menu-toggle[aria-expanded="true"] .menu-icon i{
-  transform:translateY(2px) rotate(225deg)!important;
+  transform:none!important;
 }
 
 .site-menu{
@@ -1869,9 +1881,10 @@ html.section-snap-motion main>section.is-section-active>.wrap{
 .site-menu .menu-panel,
 .site-menu.is-open .menu-panel{
   position:absolute;
-  inset:88px max(3vw,12px) auto auto;
+  inset:0 auto 0 0;
   width:min(360px,calc(100vw - 24px));
-  max-height:calc(100dvh - 100px);
+  height:100dvh;
+  max-height:none;
   display:flex;
   flex-direction:column;
   padding:1rem;
@@ -1879,14 +1892,14 @@ html.section-snap-motion main>section.is-section-active>.wrap{
   color:var(--navy);
   background:rgba(255,255,255,.98)!important;
   border:1px solid rgba(11,42,67,.2)!important;
-  border-radius:20px;
+  border-radius:0 20px 20px 0;
   box-shadow:0 24px 70px rgba(11,42,67,.22),inset 0 1px 0 #fff!important;
   -webkit-backdrop-filter:blur(18px) saturate(1.1)!important;
   backdrop-filter:blur(18px) saturate(1.1)!important;
   opacity:0;
-  transform:translateY(-10px) scale(.98);
-  transform-origin:top right;
-  transition:opacity .22s ease,transform .22s ease;
+  transform:translateX(-102%);
+  transform-origin:left center;
+  transition:opacity .25s ease,transform .32s cubic-bezier(.22,.8,.25,1);
 }
 .site-menu.is-open .menu-panel{opacity:1;transform:none}
 .menu-panel>.eyebrow{margin:.35rem .35rem .75rem}
@@ -1933,16 +1946,26 @@ html.section-snap-motion main>section.is-section-active>.wrap{
 @media(max-width:820px){
   .site-menu .menu-panel,
   .site-menu.is-open .menu-panel{
-    inset:78px 12px auto auto;
+    inset:0 auto 0 0;
     width:min(360px,calc(100vw - 24px));
-    max-height:calc(100dvh - 90px);
-    border-radius:18px;
+    height:100dvh;
+    max-height:none;
+    padding-top:1.25rem;
+    border-radius:0 18px 18px 0;
   }
 }
 
 @media(max-width:460px){
   .nav-shell .menu-toggle{width:44px;padding:0;justify-content:center}
   .nav-shell .menu-label{display:none!important}
+  .nav-shell .header-project{position:relative}
+  .nav-shell .header-project>span{
+    position:absolute;
+    inset:0;
+    display:grid;
+    place-items:center;
+    line-height:1;
+  }
 }
 
 /* Consistent medium typography: substantial without looking bold. */
