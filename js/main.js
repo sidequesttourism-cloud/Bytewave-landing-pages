@@ -12,12 +12,14 @@
     (navigator.deviceMemory && navigator.deviceMemory <= 4) ||
     (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4)
   );
-  const sectionSnapEnabled = () => !performanceLite && !reducedMotion.matches && desktopSnapLayout.matches;
+  // Keep page scrolling natural on every device. Individual content reveals
+  // provide motion without taking control of the user's wheel or touch input.
+  const sectionSnapEnabled = () => false;
   document.documentElement.classList.toggle('performance-lite', performanceLite);
   const header = $('[data-header]');
   const toggle = $('.menu-toggle');
   const menu = $('#site-menu');
-  const menuClose = $('.menu-close');
+  const firstMenuLink = $('.nav-links a', menu);
 
   const setMenu = (open) => {
     if (!toggle || !menu || !header) return;
@@ -27,7 +29,7 @@
     menu.classList.toggle('is-open', open);
     header.classList.toggle('menu-open', open);
     document.body.classList.toggle('nav-open', open);
-    if (open) window.setTimeout(() => menuClose?.focus({ preventScroll: true }), 30);
+    if (open) window.setTimeout(() => firstMenuLink?.focus({ preventScroll: true }), 30);
     else if (document.activeElement && menu.contains(document.activeElement)) toggle.focus({ preventScroll: true });
   };
   toggle?.addEventListener('click', () => setMenu(toggle.getAttribute('aria-expanded') !== 'true'));
@@ -157,9 +159,9 @@
   const reveals = $$('.reveal');
   if (reducedMotion.matches || !('IntersectionObserver' in window)) reveals.forEach((el) => el.classList.add('is-visible'));
   else {
-    const revealObserver = new IntersectionObserver((entries, observer) => {
-      entries.forEach((entry) => { if (entry.isIntersecting) { entry.target.classList.add('is-visible'); observer.unobserve(entry.target); } });
-    }, { threshold: .12 });
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => entry.target.classList.toggle('is-visible', entry.isIntersecting));
+    }, { rootMargin: '0px 0px -8% 0px', threshold: .12 });
     reveals.forEach((el) => revealObserver.observe(el));
   }
 
@@ -388,7 +390,9 @@
 
   const processLine = $('.process-line');
   if (processLine && 'IntersectionObserver' in window && !reducedMotion.matches) {
-    new IntersectionObserver(([entry], observer) => { if (entry.isIntersecting) { processLine.classList.add('is-visible'); observer.disconnect(); } }, { threshold: .25 }).observe(processLine);
+    new IntersectionObserver(([entry]) => {
+      processLine.classList.toggle('is-visible', entry.isIntersecting);
+    }, { rootMargin: '0px 0px -8% 0px', threshold: .25 }).observe(processLine);
   }
 
   const insights = {

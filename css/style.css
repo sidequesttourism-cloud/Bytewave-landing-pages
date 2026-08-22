@@ -365,6 +365,21 @@ img,svg,canvas{max-width:100%}
 
 @media(prefers-reduced-motion:reduce){.service-viewport{scroll-behavior:auto}.service-controls button:hover{transform:none}}
 
+/* Centre the content within the What We Do cards. */
+.service-carousel .service-card{
+  grid-template-columns:1fr;
+  align-content:center;
+  justify-items:center;
+  gap:1rem;
+  text-align:center;
+}
+.service-carousel .service-card h3,
+.service-carousel .service-card p{
+  max-width:780px;
+  margin-inline:auto;
+}
+.service-carousel .service-card p{margin-top:0}
+
 /* Unified floating glass section system */
 .nav-shell,.hero-copy,.section>.wrap{
   -webkit-backdrop-filter:blur(30px) saturate(1.22);
@@ -1650,3 +1665,910 @@ html.performance-lite.section-snap-motion main>section.is-section-active>.wrap{
   .contact-copy{padding:1.25rem;border-radius:22px}
   .contact-copy address{font-size:clamp(.66rem,3vw,.76rem)}
 }
+
+/* Stronger contrast while preserving the existing glass-and-cream identity. */
+:root{
+  --navy-2:#103451;
+  --line:rgba(11,42,67,.3);
+}
+
+body{background:#e5edef}
+
+.hero-copy,
+.section>.wrap{
+  border-color:rgba(11,42,67,.2);
+}
+
+.hero-copy{
+  background:rgba(250,248,244,.96);
+  box-shadow:0 28px 80px rgba(11,42,67,.16),inset 0 1px 0 #fff;
+}
+
+.section-tagline,
+.section-description,
+.hero-intro,
+.process-line p,
+.insight p{color:var(--navy-2)}
+
+.service-carousel .service-card,
+.pillar,
+.process-line li,
+.insight,
+.inquiry-form{
+  border-color:rgba(11,42,67,.22)!important;
+  background-color:rgba(255,255,255,.9);
+  box-shadow:0 24px 64px rgba(11,42,67,.14),inset 0 1px 0 #fff;
+}
+
+.service-carousel .service-card{
+  background:linear-gradient(135deg,rgba(255,255,255,.98),rgba(244,244,239,.92));
+}
+
+.service-card p,
+.pillar p{opacity:1;color:var(--navy-2)}
+
+.product-sidequest{
+  background:linear-gradient(145deg,rgba(215,235,220,.97),rgba(250,248,242,.94));
+}
+.product-tourism{
+  background:linear-gradient(145deg,rgba(231,218,235,.97),rgba(250,248,242,.94));
+}
+.product{
+  border-color:rgba(11,42,67,.24);
+  box-shadow:0 28px 72px rgba(11,42,67,.16),inset 0 1px 0 rgba(255,255,255,.95);
+}
+
+.contact-copy,
+.contact-copy address a,
+.contact-copy address span{
+  border-color:rgba(11,42,67,.22);
+}
+
+.contact-copy address a,
+.contact-copy address span{background:rgba(255,255,255,.94)}
+
+.service-controls,
+.pillar-controls button,
+.product-carousel-bar{
+  border-color:rgba(11,42,67,.24);
+  background-color:rgba(250,248,244,.96);
+}
+
+.button-quiet{border-color:rgba(11,42,67,.38);background:rgba(255,255,255,.58)}
+
+@media(max-width:820px){
+  body{background:#e2ebed}
+  .hero-copy,
+  .service-carousel .service-card,
+  .contact-copy,
+  .inquiry-form{background-color:rgba(252,250,246,.97)}
+}
+
+/* Natural page flow with lightweight content reveals. */
+html{scroll-snap-type:none!important;scroll-padding-top:88px}
+main>section,
+.site-footer{
+  scroll-snap-align:none;
+  scroll-snap-stop:normal;
+}
+main>section,
+main>section.products{
+  height:auto!important;
+  min-height:0!important;
+  overflow:visible;
+  display:block;
+  padding:clamp(5rem,9vw,8rem) 0;
+}
+.hero{
+  min-height:100svh!important;
+  height:auto!important;
+  padding:78px 0 3rem;
+}
+.hero-grid{
+  height:auto;
+  min-height:calc(100svh - 110px);
+  max-height:none;
+  overflow:visible;
+}
+.section>.wrap{
+  max-height:none;
+  overflow:visible;
+  overscroll-behavior:auto;
+}
+html.section-snap-motion main>section>.wrap,
+html.section-snap-motion main>section.is-section-past>.wrap,
+html.section-snap-motion main>section.is-section-future>.wrap,
+html.section-snap-motion main>section.is-section-active>.wrap{
+  opacity:1;
+  transform:none;
+  transition:none;
+  will-change:auto;
+}
+
+@media(max-width:820px){
+  html{scroll-padding-top:76px}
+  main>section,
+  main>section.products{padding:clamp(4.75rem,12vw,6.5rem) 0}
+  .hero{padding:76px 0 3rem}
+  .hero-grid{min-height:0}
+}
+
+/* Compact header menu and contained navigation popover. */
+.nav-shell .menu-toggle{
+  min-height:44px;
+  height:44px;
+  gap:.6rem;
+  padding:0 .8rem;
+  border:1px solid rgba(11,42,67,.18);
+  border-radius:999px;
+  background:#fff;
+  box-shadow:none;
+}
+.nav-shell .menu-toggle:hover,
+.nav-shell .menu-toggle[aria-expanded="true"]{
+  color:#fff;
+  background:var(--navy);
+  border-color:var(--navy);
+}
+.nav-shell .menu-icon{
+  width:16px;
+  height:16px;
+  display:grid!important;
+  place-items:center;
+  fill:none;
+}
+.nav-shell .menu-icon i{
+  display:block;
+  width:8px;
+  height:8px;
+  margin:0;
+  background:transparent;
+  border-right:1.75px solid currentColor;
+  border-bottom:1.75px solid currentColor;
+  border-radius:1px;
+  transform:translateY(-2px) rotate(45deg)!important;
+  transform-origin:center;
+  transition:transform .22s ease!important;
+}
+.nav-shell .menu-toggle[aria-expanded="true"] .menu-icon i{
+  transform:translateY(2px) rotate(225deg)!important;
+}
+
+.site-menu{
+  position:fixed;
+  inset:0;
+  z-index:90;
+  display:block;
+  visibility:hidden;
+  pointer-events:none;
+  padding:0;
+  background:transparent;
+  transition:visibility 0s linear .24s;
+}
+.site-menu.is-open{
+  visibility:visible;
+  pointer-events:auto;
+  transition-delay:0s;
+}
+.site-menu .menu-backdrop,
+.site-menu.is-open .menu-backdrop{
+  position:absolute;
+  inset:0;
+  background:rgba(11,42,67,.08);
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+  opacity:0;
+  transition:opacity .22s ease;
+}
+.site-menu.is-open .menu-backdrop{opacity:1}
+.performance-lite .site-menu .menu-backdrop,
+.performance-lite .site-menu.is-open .menu-backdrop{
+  background:rgba(11,42,67,.07)!important;
+}
+
+.site-menu .menu-panel,
+.site-menu.is-open .menu-panel{
+  position:absolute;
+  inset:88px max(3vw,12px) auto auto;
+  width:min(360px,calc(100vw - 24px));
+  max-height:calc(100dvh - 100px);
+  display:flex;
+  flex-direction:column;
+  padding:1rem;
+  overflow-y:auto;
+  color:var(--navy);
+  background:rgba(255,255,255,.98)!important;
+  border:1px solid rgba(11,42,67,.2)!important;
+  border-radius:20px;
+  box-shadow:0 24px 70px rgba(11,42,67,.22),inset 0 1px 0 #fff!important;
+  -webkit-backdrop-filter:blur(18px) saturate(1.1)!important;
+  backdrop-filter:blur(18px) saturate(1.1)!important;
+  opacity:0;
+  transform:translateY(-10px) scale(.98);
+  transform-origin:top right;
+  transition:opacity .22s ease,transform .22s ease;
+}
+.site-menu.is-open .menu-panel{opacity:1;transform:none}
+.menu-panel>.eyebrow{margin:.35rem .35rem .75rem}
+.menu-close{
+  position:absolute;
+  top:.7rem;
+  right:.7rem;
+  min-height:36px;
+  padding:.3rem .55rem;
+  border:1px solid rgba(11,42,67,.15);
+  border-radius:999px;
+  background:#f4f7f6;
+  font-size:.62rem;
+}
+.menu-close span{font-size:.95rem}
+.site-menu.is-open .menu-panel .nav-links{gap:.3rem}
+.site-menu.is-open .menu-panel .nav-links a{
+  min-height:46px;
+  padding:.55rem .7rem;
+  border:0;
+  border-radius:11px;
+  background:transparent;
+  font-size:1.05rem;
+  font-weight:500;
+  opacity:1;
+  transform:none;
+  transition:background .18s ease,color .18s ease;
+}
+.site-menu.is-open .menu-panel .nav-links a:hover,
+.site-menu.is-open .menu-panel .nav-links a:focus-visible,
+.site-menu.is-open .menu-panel .nav-links a.is-active{
+  color:#fff;
+  background:var(--navy);
+  border-color:transparent;
+}
+.site-menu.is-open .menu-panel .nav-links a i{opacity:.7;transform:none}
+.menu-foot{
+  margin-top:.75rem;
+  padding:.8rem .35rem .15rem;
+  gap:.25rem;
+  font-size:.62rem;
+}
+
+@media(max-width:820px){
+  .site-menu .menu-panel,
+  .site-menu.is-open .menu-panel{
+    inset:78px 12px auto auto;
+    width:min(360px,calc(100vw - 24px));
+    max-height:calc(100dvh - 90px);
+    border-radius:18px;
+  }
+}
+
+@media(max-width:460px){
+  .nav-shell .menu-toggle{width:44px;padding:0;justify-content:center}
+  .nav-shell .menu-label{display:none!important}
+}
+
+/* Consistent medium typography: substantial without looking bold. */
+body{font-weight:500}
+h1,h2,h3{font-weight:500}
+.hero h1,
+.pillar h3,
+.service-card h3,
+.product h3,
+.process-line h3,
+.insight h3{font-weight:500}
+
+.button,
+.menu-toggle,
+.header-project,
+.pillar-controls button,
+.service-controls button,
+.product-arrows button,
+.insight button,
+.inquiry-form button{
+  font-weight:500;
+}
+
+.menu-panel .nav-links a,
+.brand,
+.section-tagline,
+.hero-intro,
+.section-description,
+.service-card p,
+.pillar p,
+.product-body>p,
+.process-line p,
+.insight p,
+.contact-copy>.section-description{
+  font-weight:500;
+}
+
+.eyebrow,
+.visual-meta,
+.product-index,
+.product-kicker,
+.process-line span,
+.insight>span,
+.inquiry-form label,
+.footer-bottom,
+.menu-foot,
+.product-chips span,
+.product-card-top,
+.product-card-meta,
+.browser-chrome>b,
+.preview-nav>span,
+.preview-copy small,
+.preview-copy i,
+.preview-cards>span,
+.contact address{
+  font-weight:500;
+}
+
+.inquiry-form input,
+.inquiry-form select,
+.inquiry-form textarea{font-weight:500}
+
+/* Use the primary site typeface for interface copy that previously felt thin. */
+.eyebrow,
+.button,
+.menu-toggle,
+.header-project,
+.menu-foot,
+.insight>span,
+.insight button,
+.inquiry-form label,
+.contact address,
+.footer-bottom{
+  font-family:var(--sans);
+  font-weight:500;
+}
+
+/* Latest SideQuest Tourism product screens. */
+.tourism-screenshot-stack{
+  position:relative;
+  z-index:3;
+  width:min(100%,760px);
+  aspect-ratio:1.48;
+  margin:auto;
+}
+.tourism-shot{
+  position:absolute;
+  margin:0;
+  overflow:hidden;
+  border:1px solid rgba(11,42,67,.16);
+  border-radius:18px;
+  background:#fff;
+  box-shadow:0 24px 55px rgba(11,42,67,.2),0 6px 16px rgba(11,42,67,.1);
+  transition:transform .45s ease,box-shadow .45s ease;
+}
+.tourism-shot img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:top left;
+}
+.tourism-shot-main{inset:8% 10% 8% 6%;z-index:3;transform:rotate(-1deg)}
+.tourism-shot-secondary{width:46%;height:48%;top:0;right:0;z-index:4;transform:rotate(3deg)}
+.tourism-shot-tertiary{width:43%;height:44%;right:2%;bottom:0;z-index:5;transform:rotate(-2deg)}
+.product.is-active .tourism-screenshot-stack:hover .tourism-shot-main{
+  transform:translateX(-2%) rotate(-1.5deg);
+  box-shadow:0 30px 65px rgba(11,42,67,.24),0 8px 20px rgba(11,42,67,.12);
+}
+.product.is-active .tourism-screenshot-stack:hover .tourism-shot-secondary{transform:translate(2%,-3%) rotate(4deg)}
+.product.is-active .tourism-screenshot-stack:hover .tourism-shot-tertiary{transform:translate(3%,3%) rotate(-3deg)}
+
+@media(max-width:820px){
+  .tourism-screenshot-stack{width:min(86vw,430px);aspect-ratio:1.42}
+  .tourism-shot{border-radius:12px}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .tourism-shot{transition:none}
+}
+
+/* Keep the Tourism screens inside the artwork area at every viewport. */
+.tourism-screenshot-stack{
+  width:100%;
+  height:100%;
+  min-height:0;
+  aspect-ratio:auto;
+}
+.tourism-shot img{
+  object-fit:contain;
+  object-position:center;
+  background:#fff;
+}
+.tourism-shot-tertiary{
+  width:70%;
+  height:82%;
+  left:0;
+  right:auto;
+  top:9%;
+  bottom:auto;
+  z-index:2;
+  transform:rotate(-1deg);
+}
+.tourism-shot-main{
+  width:25%;
+  height:92%;
+  inset:0 14% auto auto;
+  z-index:4;
+  transform:rotate(2deg);
+}
+.tourism-shot-secondary{
+  width:25%;
+  height:92%;
+  top:auto;
+  right:0;
+  bottom:0;
+  z-index:5;
+  transform:rotate(-2deg);
+}
+.product.is-active .tourism-screenshot-stack:hover .tourism-shot-tertiary{transform:translateX(-1%) rotate(-1.5deg)}
+.product.is-active .tourism-screenshot-stack:hover .tourism-shot-main{transform:translateY(-2%) rotate(3deg)}
+.product.is-active .tourism-screenshot-stack:hover .tourism-shot-secondary{transform:translate(2%,2%) rotate(-3deg)}
+
+@media(max-width:820px){
+  .tourism-screenshot-stack{width:100%;height:100%;aspect-ratio:auto}
+}
+
+/* Refined Tourism device composition. */
+.tourism-shot-tertiary{
+  width:62%;
+  height:72%;
+  left:3%;
+  top:14%;
+}
+.tourism-shot-main,
+.tourism-shot-secondary{
+  width:min(28%,112px);
+  height:94%;
+  padding:5px;
+  border:3px solid var(--navy);
+  border-radius:24px;
+  background:var(--navy);
+  box-shadow:0 20px 42px rgba(11,42,67,.3),inset 0 0 0 1px rgba(255,255,255,.18);
+}
+.tourism-shot-main{right:16%}
+.tourism-shot-secondary{right:0}
+.tourism-shot-main img,
+.tourism-shot-secondary img{
+  border-radius:17px;
+  object-fit:cover;
+  object-position:top;
+}
+.tourism-shot-main:before,
+.tourism-shot-secondary:before{
+  content:"";
+  position:absolute;
+  z-index:2;
+  top:8px;
+  left:50%;
+  width:32%;
+  height:5px;
+  border-radius:999px;
+  background:var(--navy);
+  transform:translateX(-50%);
+  box-shadow:0 1px 0 rgba(255,255,255,.18);
+}
+
+@media(max-width:560px){
+  .tourism-shot-tertiary{width:60%;height:66%;top:17%}
+  .tourism-shot-main,
+  .tourism-shot-secondary{
+    width:min(29%,88px);
+    height:92%;
+    padding:4px;
+    border-width:2px;
+    border-radius:19px;
+  }
+  .tourism-shot-main{right:17%}
+  .tourism-shot-main img,
+  .tourism-shot-secondary img{border-radius:14px}
+}
+
+/* Cleaner device mock-ups: one compact browser and one modern phone. */
+.tourism-shot-tertiary{
+  width:50%;
+  height:64%;
+  left:9%;
+  top:18%;
+  padding:18px 5px 5px;
+  border:2px solid var(--navy);
+  border-radius:12px;
+  background:#fff;
+  transform:rotate(-1deg);
+  box-shadow:0 18px 38px rgba(11,42,67,.18);
+}
+.tourism-shot-tertiary:before{
+  content:"";
+  position:absolute;
+  top:6px;
+  left:9px;
+  width:5px;
+  height:5px;
+  border-radius:50%;
+  background:var(--orchid);
+  box-shadow:9px 0 0 var(--marigold),18px 0 0 var(--emerald);
+}
+.tourism-shot-tertiary img{
+  border-radius:5px;
+  object-fit:cover;
+  object-position:top left;
+}
+.tourism-shot-main{
+  display:block;
+  width:min(24%,96px);
+  height:96%;
+  right:12%;
+  top:2%;
+  padding:5px;
+  border:2px solid #111827;
+  border-radius:22px;
+  background:#111827;
+  transform:rotate(1.5deg);
+  box-shadow:0 22px 45px rgba(11,42,67,.32);
+}
+.tourism-shot-main img{border-radius:16px}
+.tourism-shot-main:before{
+  top:7px;
+  width:36%;
+  height:6px;
+  background:#111827;
+  box-shadow:none;
+}
+.tourism-shot-main:after{
+  content:"";
+  position:absolute;
+  right:-4px;
+  top:27%;
+  width:2px;
+  height:28px;
+  border-radius:0 3px 3px 0;
+  background:#111827;
+}
+.tourism-shot-secondary{display:none}
+.product.is-active .tourism-screenshot-stack:hover .tourism-shot-tertiary{transform:translateX(-1%) rotate(-1.5deg)}
+.product.is-active .tourism-screenshot-stack:hover .tourism-shot-main{transform:translate(2%,-2%) rotate(2.5deg)}
+
+@media(max-width:560px){
+  .tourism-shot-tertiary{
+    width:48%;
+    height:58%;
+    left:8%;
+    top:21%;
+    padding-top:15px;
+  }
+  .tourism-shot-main{
+    width:min(27%,82px);
+    height:94%;
+    right:11%;
+    top:3%;
+    border-radius:20px;
+  }
+}
+
+/* Devices.css-inspired balanced device showcase. */
+.product-tourism .product-showcase{min-height:240px}
+.tourism-screenshot-stack{height:100%}
+.tourism-shot-tertiary{
+  display:block;
+  width:42%;
+  height:60%;
+  left:2%;
+  top:20%;
+  padding:17px 5px 5px;
+  border-width:2px;
+  border-radius:11px;
+  transform:none;
+}
+.tourism-shot-main,
+.tourism-shot-secondary{
+  display:block;
+  width:22%;
+  height:92%;
+  top:4%;
+  bottom:auto;
+  padding:6px;
+  border:4px solid #101827;
+  border-radius:26px;
+  background:#101827;
+  transform:none;
+  box-shadow:0 18px 40px rgba(11,42,67,.28);
+}
+.tourism-shot-main{left:50%;right:auto}
+.tourism-shot-secondary{left:auto;right:2%}
+.tourism-shot-main img,
+.tourism-shot-secondary img{
+  border-radius:18px;
+  object-fit:cover;
+  object-position:top center;
+}
+.tourism-shot-main:before,
+.tourism-shot-secondary:before{
+  top:8px;
+  width:38%;
+  height:7px;
+  background:#101827;
+  box-shadow:none;
+}
+.tourism-shot-main:after,
+.tourism-shot-secondary:after{
+  content:"";
+  position:absolute;
+  right:-6px;
+  top:25%;
+  width:3px;
+  height:30px;
+  border-radius:0 3px 3px 0;
+  background:#101827;
+}
+.product.is-active .tourism-screenshot-stack:hover .tourism-shot-tertiary{transform:translateY(-2px)}
+.product.is-active .tourism-screenshot-stack:hover .tourism-shot-main{transform:translateY(-4px) rotate(-1deg)}
+.product.is-active .tourism-screenshot-stack:hover .tourism-shot-secondary{transform:translateY(-4px) rotate(1deg)}
+
+@media(max-width:560px){
+  .product-tourism .product-showcase{min-height:235px}
+  .tourism-shot-tertiary{
+    width:37%;
+    height:52%;
+    left:1%;
+    top:24%;
+    padding-top:14px;
+  }
+  .tourism-shot-main,
+  .tourism-shot-secondary{
+    width:27%;
+    height:90%;
+    top:5%;
+    padding:4px;
+    border-width:3px;
+    border-radius:21px;
+  }
+  .tourism-shot-main{left:40%}
+  .tourism-shot-secondary{right:1%}
+  .tourism-shot-main img,
+  .tourism-shot-secondary img{border-radius:15px}
+}
+
+/* SideQuest Tourism: destination-led product artwork. */
+.tourism-experience-showcase{
+  position:absolute;
+  inset:0;
+  z-index:3;
+  width:100%;
+  height:auto;
+  display:grid;
+  grid-template-columns:minmax(0,1.7fr) minmax(120px,.9fr);
+  gap:10px;
+}
+.tourism-feature-card,
+.tourism-experience-card{
+  position:relative;
+  min-width:0;
+  min-height:0;
+  margin:0;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.7);
+  background:#d9e4de;
+  box-shadow:0 18px 42px rgba(11,42,67,.18),inset 0 1px 0 rgba(255,255,255,.55);
+}
+.tourism-feature-card{border-radius:24px 8px 24px 8px}
+.tourism-experience-list{display:grid;grid-template-rows:1fr 1fr;gap:10px;min-height:0}
+.tourism-experience-card:first-child{border-radius:8px 24px 8px 16px}
+.tourism-experience-card:last-child{border-radius:16px 8px 24px 8px}
+.tourism-feature-card img,
+.tourism-experience-card img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  transition:transform .7s cubic-bezier(.16,1,.3,1);
+}
+.tourism-feature-card:after,
+.tourism-experience-card:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg,transparent 34%,rgba(4,24,35,.78) 100%);
+  pointer-events:none;
+}
+.tourism-feature-card figcaption,
+.tourism-experience-card figcaption{
+  position:absolute;
+  z-index:2;
+  left:clamp(.75rem,1.5vw,1.2rem);
+  right:clamp(.75rem,1.5vw,1.2rem);
+  bottom:clamp(.7rem,1.4vw,1.1rem);
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  color:#fff;
+  text-shadow:0 1px 8px rgba(0,0,0,.35);
+}
+.tourism-feature-card small,
+.tourism-experience-card small{
+  margin-bottom:.25rem;
+  font-family:var(--sans);
+  font-size:clamp(.48rem,.7vw,.62rem);
+  font-weight:500;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  opacity:.86;
+}
+.tourism-feature-card strong{font:500 clamp(1rem,2vw,1.65rem)/1.05 var(--display)}
+.tourism-feature-card figcaption span{margin-top:.45rem;font-size:clamp(.55rem,.75vw,.68rem);font-weight:500;opacity:.85}
+.tourism-experience-card strong{font:500 clamp(.72rem,1.15vw,1rem)/1.05 var(--display)}
+.tourism-discovery-badge{
+  position:absolute;
+  z-index:4;
+  top:12px;
+  left:12px;
+  display:flex;
+  align-items:center;
+  gap:.55rem;
+  padding:.45rem .65rem;
+  border:1px solid rgba(255,255,255,.66);
+  border-radius:999px;
+  background:rgba(247,245,241,.86);
+  color:var(--navy);
+  box-shadow:0 10px 24px rgba(11,42,67,.16);
+  backdrop-filter:blur(12px);
+}
+.tourism-discovery-badge span{
+  width:24px;
+  height:24px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  background:var(--emerald);
+  color:#fff;
+  font-size:.58rem;
+}
+.tourism-discovery-badge strong{font:500 .66rem var(--sans);letter-spacing:.04em;text-transform:uppercase}
+.product.is-active .tourism-feature-card:hover img,
+.product.is-active .tourism-experience-card:hover img{transform:scale(1.04)}
+
+@media(max-width:560px){
+  .tourism-experience-showcase{grid-template-columns:minmax(0,1.5fr) minmax(96px,.95fr);gap:7px}
+  .tourism-experience-list{gap:7px}
+  .tourism-feature-card{border-radius:18px 7px 18px 7px}
+  .tourism-experience-card:first-child{border-radius:7px 18px 7px 12px}
+  .tourism-experience-card:last-child{border-radius:12px 7px 18px 7px}
+  .tourism-feature-card figcaption span{display:none}
+  .tourism-discovery-badge{top:8px;left:8px;padding:.35rem .5rem;gap:.4rem}
+  .tourism-discovery-badge span{width:20px;height:20px}
+  .tourism-discovery-badge strong{font-size:.54rem}
+}
+
+/* Keep the real product interface central to the Tourism story. */
+.tourism-experience-showcase{
+  grid-template-columns:minmax(112px,.9fr) minmax(0,1.35fr) minmax(100px,.75fr);
+}
+.tourism-product-preview{
+  position:relative;
+  min-width:0;
+  min-height:0;
+  margin:0;
+  overflow:hidden;
+  padding:6px 6px 48px;
+  border:1px solid rgba(11,42,67,.2);
+  border-radius:22px 8px 18px 8px;
+  background:rgba(255,255,255,.9);
+  box-shadow:0 20px 44px rgba(11,42,67,.2),inset 0 1px 0 rgba(255,255,255,.9);
+}
+.tourism-product-preview img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  object-position:top center;
+  border-radius:16px 5px 10px 5px;
+  background:#fff;
+}
+.tourism-product-preview figcaption{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  min-height:48px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding:.45rem .6rem;
+  background:var(--navy);
+  color:#fff;
+}
+.tourism-product-preview figcaption span{
+  font-size:.5rem;
+  font-weight:500;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--marigold);
+}
+.tourism-product-preview figcaption strong{font:500 clamp(.62rem,.9vw,.8rem)/1.1 var(--sans)}
+.tourism-discovery-badge{left:calc(30% + 12px)}
+
+@media(max-width:560px){
+  .tourism-experience-showcase{
+    grid-template-columns:minmax(86px,.8fr) minmax(0,1.05fr) minmax(82px,.75fr);
+    gap:6px;
+  }
+  .tourism-experience-list{gap:6px}
+  .tourism-product-preview{
+    padding:4px 4px 42px;
+    border-radius:17px 6px 14px 6px;
+  }
+  .tourism-product-preview img{border-radius:12px 4px 8px 4px}
+  .tourism-product-preview figcaption{min-height:42px;padding:.35rem .45rem}
+  .tourism-product-preview figcaption strong{font-size:.58rem}
+  .tourism-discovery-badge{left:calc(33% + 6px)}
+}
+
+/* Master product overview with supporting Brunei experiences. */
+.tourism-experience-showcase{
+  grid-template-columns:minmax(0,2.35fr) minmax(120px,.75fr);
+  gap:10px;
+}
+.tourism-product-preview{
+  padding:0;
+  border-radius:24px 8px 24px 8px;
+  background:#16051f;
+}
+.tourism-product-preview img{
+  width:100%;
+  height:100%;
+  border-radius:inherit;
+  object-fit:cover;
+  object-position:center;
+}
+.tourism-product-preview figcaption{
+  left:12px;
+  right:auto;
+  top:12px;
+  bottom:auto;
+  min-height:0;
+  width:max-content;
+  max-width:calc(100% - 24px);
+  padding:.42rem .65rem;
+  border:1px solid rgba(255,255,255,.48);
+  border-radius:999px;
+  background:rgba(11,42,67,.78);
+  backdrop-filter:blur(12px);
+}
+.tourism-product-preview figcaption span{color:var(--marigold)}
+.tourism-product-preview figcaption strong{font-size:.62rem}
+
+@media(max-width:560px){
+  .tourism-experience-showcase{
+    grid-template-columns:1fr;
+    grid-template-rows:minmax(0,1.7fr) minmax(66px,.7fr);
+    gap:7px;
+  }
+  .tourism-experience-list{
+    grid-template-columns:1fr 1fr;
+    grid-template-rows:1fr;
+    gap:7px;
+  }
+  .tourism-product-preview{
+    padding:0;
+    border-radius:18px 7px 18px 7px;
+  }
+  .tourism-product-preview img{border-radius:inherit}
+  .tourism-product-preview figcaption{
+    left:8px;
+    top:8px;
+    min-height:0;
+    max-width:calc(100% - 16px);
+    padding:.3rem .5rem;
+  }
+  .tourism-product-preview figcaption strong{display:none}
+}
+
+/* Center button labels while keeping their icons close and balanced. */
+.button,
+.nav-shell .menu-toggle,
+.nav-shell .header-project,
+.insight button,
+.inquiry-form button{
+  justify-content:center;
+  text-align:center;
+}
+.button{gap:.7rem}
+.nav-shell .header-project{gap:.65rem}
+.insight button{display:inline-flex;align-items:center;gap:.45rem}

@@ -11,10 +11,10 @@
   <title>ByteWave Digital Enterprise — Ideas into Digital Reality.</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20260820-10">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=20260822-20">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
-  <script src="js/main.js" defer></script>
+  <script src="js/main.js?v=20260822-3" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -27,18 +27,14 @@
       <div class="header-actions">
         <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-menu" aria-label="Open navigation menu">
           <span class="menu-label">Menu</span>
-          <svg class="menu-icon" viewBox="0 0 18 18" width="18" height="18" aria-hidden="true" focusable="false">
-            <circle cx="5" cy="5" r="1.5"></circle><circle cx="13" cy="5" r="1.5"></circle>
-            <circle cx="5" cy="13" r="1.5"></circle><circle cx="13" cy="13" r="1.5"></circle>
-          </svg>
+          <span class="menu-icon" aria-hidden="true"><i></i></span>
         </button>
         <a class="header-project" href="#contact">Start a Project <span aria-hidden="true">↗</span></a>
       </div>
       <div class="site-menu" id="site-menu" aria-hidden="true">
         <div class="menu-backdrop" data-menu-close></div>
         <div class="menu-panel">
-          <button class="menu-close" type="button" data-menu-close><span aria-hidden="true">×</span> Close</button>
-          <p class="eyebrow">Explore ByteWave</p>
+          <p class="eyebrow">Navigation</p>
           <div class="nav-links">
             <a href="#home" class="is-active"><span>Home</span><i aria-hidden="true">↗</i></a>
             <a href="#about"><span>About</span><i aria-hidden="true">↗</i></a>
@@ -64,7 +60,6 @@
             <a class="button button-primary" href="#contact">Start a Project <span aria-hidden="true">↗</span></a>
             <a class="button button-quiet" href="#products">Explore Our Work <span aria-hidden="true">↓</span></a>
           </div>
-          <p class="system-status"><span aria-hidden="true"></span> Online and building in Brunei</p>
         </div>
         <div class="hero-visual" aria-label="Interactive ByteWave Digital Enterprise identity">
           <div class="brand-3d-logo" data-logo-stage>
@@ -157,18 +152,22 @@
               </div>
             </article>
             <article class="product product-tourism" data-product-slide aria-label="SideQuest Tourism, product 2 of 2">
-              <div class="product-index"><span class="product-status">Concept Stage</span></div>
-              <div class="product-body"><div class="product-copy"><p class="product-kicker">Tourism technology concept</p><h3>SideQuest <span>Tourism</span></h3><p>We are exploring a more personal way to discover Brunei: through the places, people, food, and stories that give each area its character.</p><div class="product-chips" aria-label="Product attributes"><span>Tourism technology</span><span>Concept stage</span></div></div></div>
-              <div class="product-showcase product-showcase-tourism" aria-hidden="true">
-                <div class="product-browser product-browser-tourism">
-                  <div class="browser-chrome"><span><i></i><i></i><i></i></span><b>explore.sidequest.bn</b><em></em></div>
-                  <div class="website-preview">
-                    <div class="preview-nav"><strong>SQ<span>/TRAVEL</span></strong><span>Places&nbsp;&nbsp; Experiences&nbsp;&nbsp; Stories</span></div>
-                    <div class="preview-hero">
-                      <div class="preview-copy"><small>DISCOVER BRUNEI</small><strong>Closer to the<br>story of a place.</strong><i>Start exploring →</i></div>
-                      <div class="preview-landscape"><span></span><b>TEMBURONG</b></div>
-                    </div>
-                    <div class="preview-cards"><span><i></i>Nature</span><span><i></i>Culture</span><span><i></i>Food trails</span></div>
+              <div class="product-index" aria-hidden="true"></div>
+              <div class="product-body"><div class="product-copy"><h3>SideQuest <span>Tourism</span></h3><p>We are exploring a more personal way to discover Brunei: through the places, people, food, and stories that give each area its character.</p><div class="product-chips" aria-label="Product attributes"><span>Tourism technology</span></div></div></div>
+              <div class="product-showcase product-showcase-tourism">
+                <div class="tourism-experience-showcase" aria-label="Featured Brunei experience concepts">
+                  <figure class="tourism-product-preview">
+                    <img src="assets/sidequest-tourism/sidequest-master-overview.png" alt="SideQuest Tourism product overview showing discovery, experience details, booking, passport and wallet screens" loading="lazy">
+                  </figure>
+                  <div class="tourism-experience-list">
+                    <figure class="tourism-experience-card">
+                      <img src="assets/sidequest-tourism/experiences/kampong-ayer-boat-craft.webp" alt="Kampong Ayer boat and craft experience" loading="lazy">
+                      <figcaption><small>Bandar Seri Begawan</small><strong>Water village stories</strong></figcaption>
+                    </figure>
+                    <figure class="tourism-experience-card">
+                      <img src="assets/sidequest-tourism/experiences/ambuyat-cooking-class.webp" alt="Traditional ambuyat cooking experience" loading="lazy">
+                      <figcaption><small>Local flavours</small><strong>Make ambuyat together</strong></figcaption>
+                    </figure>
                   </div>
                 </div>
               </div>
