@@ -28,6 +28,11 @@ assert.ok(jsonLdSource, "JSON-LD is present");
 const jsonLd = JSON.parse(jsonLdSource);
 assert.deepEqual(jsonLd["@graph"].map((item) => item["@type"]), ["Organization", "WebSite", "Service"]);
 assert.equal(jsonLd["@graph"][0].areaServed.name, "Brunei Darussalam");
+assert.equal(jsonLd["@graph"][2].hasOfferCatalog.itemListElement.length, 4);
+assert.match(html, /id="brunei-solutions"/);
+assert.match(html, /Who can build a website for my business in Brunei\?/);
+assert.match(html, /Does ByteWave provide web design and UI\/UX design in Brunei\?/);
+assert.match(html, /How can AI automation help a local business\?/);
 
 const robots = await readFile(new URL("robots.txt", clientRoot), "utf8");
 assert.match(robots, /Allow: \/$/m);
@@ -47,6 +52,6 @@ const response = await worker.fetch(new Request("https://bytewave.example/"), {
   ASSETS: { fetch: async () => new Response(html, { headers: { "Content-Type": "text/html; charset=utf-8" } }) },
 });
 assert.equal(response.status, 200);
-assert.match(response.headers.get("content-security-policy") || "", /sha256-uuFuPIe\/UGEKjbsPlRQuxXMTIfmir0I0tLrqjaRtvVg=/);
+assert.match(response.headers.get("content-security-policy") || "", /sha256-OGV9K1beDQ7en0Q70ZMYKvIb9PX9\+RHctf\+LPuo\+PuM=/);
 
 console.log("Verified SEO metadata, headings, anchors, schema, crawl files, assets, and security headers");
