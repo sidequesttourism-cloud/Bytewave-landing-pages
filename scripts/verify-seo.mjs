@@ -35,6 +35,9 @@ assert.match(html, /id="brunei-solutions"/);
 assert.match(html, /Who can build a website for my business in Brunei\?/);
 assert.match(html, /Does ByteWave provide web design and UI\/UX design in Brunei\?/);
 assert.match(html, /How can AI automation help a local business\?/);
+assert.match(html, /<form class="inquiry-form reveal" action="https:\/\/api\.web3forms\.com\/submit" method="post" novalidate>/);
+assert.match(html, /name="access_key" value="c6847f68-6d23-4717-bd32-699167d6ecc4"/);
+assert.match(html, /name="botcheck"/);
 
 const robots = await readFile(new URL("robots.txt", clientRoot), "utf8");
 assert.match(robots, /Allow: \/$/m);
@@ -55,5 +58,7 @@ const response = await worker.fetch(new Request("https://bytewave.example/"), {
 });
 assert.equal(response.status, 200);
 assert.match(response.headers.get("content-security-policy") || "", /sha256-OGV9K1beDQ7en0Q70ZMYKvIb9PX9\+RHctf\+LPuo\+PuM=/);
+assert.match(response.headers.get("content-security-policy") || "", /connect-src[^;]*https:\/\/api\.web3forms\.com/);
+assert.match(response.headers.get("content-security-policy") || "", /form-action[^;]*https:\/\/api\.web3forms\.com/);
 
 console.log("Verified SEO metadata, headings, anchors, schema, crawl files, assets, and security headers");

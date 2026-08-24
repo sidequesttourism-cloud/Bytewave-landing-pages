@@ -124,7 +124,7 @@
   }
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
-  <script src="js/main.js?v=20260822-4" defer></script>
+  <script src="js/main.js?v=20260824-web3forms1" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -367,12 +367,15 @@
             <span>Bandar Seri Begawan, Brunei</span>
           </address>
         </div>
-        <form class="inquiry-form reveal" action="/api/inquiry" method="post" novalidate>
+        <form class="inquiry-form reveal" action="https://api.web3forms.com/submit" method="post" novalidate>
+          <input type="hidden" name="access_key" value="c6847f68-6d23-4717-bd32-699167d6ecc4">
+          <input type="hidden" name="subject" value="New ByteWave Website Inquiry">
+          <input type="hidden" name="from_name" value="ByteWave Digital Website">
           <div class="form-row"><label>Name <span>*</span><input type="text" name="name" autocomplete="name" required maxlength="100"></label><label>Email <span>*</span><input type="email" name="email" autocomplete="email" required maxlength="160"></label></div>
           <div class="form-row"><label>Organisation<input type="text" name="organisation" autocomplete="organization" maxlength="120"></label><label>Service<select name="service"><option value="">Select a service</option><option>Web development</option><option>Software development</option><option>UI/UX design</option><option>AI and automation</option><option>Data and analytics</option><option>Digital transformation</option><option>Cloud and deployment</option><option>Product strategy and consulting</option></select></label></div>
           <label>Timeline<select name="timeline"><option value="">Select a timeline</option><option>As soon as practical</option><option>1–3 months</option><option>3–6 months</option><option>Exploring for later</option></select></label>
           <label>Message <span>*</span><textarea name="message" rows="5" required minlength="20" maxlength="3000" placeholder="A short outline of your idea, challenge, or goal."></textarea></label>
-          <div class="honeypot" aria-hidden="true"><label>Company<input type="text" name="company" tabindex="-1" autocomplete="off"></label></div>
+          <div class="honeypot" aria-hidden="true"><label>Leave this field empty<input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off"></label></div>
           <div class="form-submit"><button class="button button-primary" type="submit">Send Inquiry <span aria-hidden="true">↗</span></button><p class="form-status" role="status" aria-live="polite"></p></div>
         </form>
       </div>

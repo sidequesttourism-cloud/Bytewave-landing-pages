@@ -443,10 +443,10 @@
     const submit = $('button[type="submit"]', form); if (submit) submit.disabled = true;
     if (status) status.textContent = 'Sending your inquiry…';
     try {
-      const payload = Object.fromEntries(new FormData(form).entries());
-      const response = await fetch(form.action, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, credentials: 'same-origin', body: JSON.stringify(payload) });
+      const payload = new FormData(form);
+      const response = await fetch(form.action, { method: 'POST', headers: { 'Accept': 'application/json' }, body: payload });
       const data = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(data.message || 'We could not send your inquiry. Please try again.');
+      if (!response.ok || data.success === false) throw new Error(data.message || 'We could not send your inquiry. Please try again.');
       form.reset(); if (status) status.textContent = data.message || 'Thank you. We will be in touch soon.';
     } catch (error) { if (status) status.textContent = error.message || 'Something went wrong. Please email us directly.'; }
     finally { form.classList.remove('is-busy'); if (submit) submit.disabled = false; }

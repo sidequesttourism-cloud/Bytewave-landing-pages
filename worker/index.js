@@ -3,7 +3,7 @@ function secure(response) {
   result.headers.set("X-Content-Type-Options", "nosniff");
   result.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
   result.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
-  result.headers.set("Content-Security-Policy", "default-src 'self'; script-src 'self' 'sha256-OGV9K1beDQ7en0Q70ZMYKvIb9PX9+RHctf+LPuo+PuM=' https://cdnjs.cloudflare.com; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; upgrade-insecure-requests");
+  result.headers.set("Content-Security-Policy", "default-src 'self'; script-src 'self' 'sha256-OGV9K1beDQ7en0Q70ZMYKvIb9PX9+RHctf+LPuo+PuM=' https://cdnjs.cloudflare.com; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.web3forms.com; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self' https://api.web3forms.com; upgrade-insecure-requests");
   return result;
 }
 
