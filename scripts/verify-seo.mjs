@@ -13,6 +13,8 @@ assert.equal((html.match(/<meta name="description"/g) || []).length, 1);
 assert.equal((html.match(/<link rel="canonical"/g) || []).length, 1);
 assert.equal((html.match(/<h1\b/g) || []).length, 1);
 assert.match(html, /<h1[^>]*>Web Development &amp; Digital Solutions in Brunei<\/h1>/);
+assert.match(html, /<link rel="icon" type="image\/png" sizes="512x512" href="\/assets\/bytewave-favicon-512\.png">/);
+assert.match(html, /<link rel="apple-touch-icon" sizes="180x180" href="\/assets\/apple-touch-icon\.png">/);
 
 const description = html.match(/<meta name="description" content="([^"]+)">/)?.[1] || "";
 assert.ok(description.length >= 150 && description.length <= 160, `Meta description is ${description.length} characters`);
@@ -43,7 +45,7 @@ assert.equal((sitemap.match(/<url>/g) || []).length, 1);
 assert.match(sitemap, /<loc>https:\/\/bytewave-digitalbrunei\.com\/<\/loc>/);
 assert.doesNotMatch(sitemap, /#/);
 
-for (const asset of ["assets/preview-desktop.png", "assets/bytewave-logo-transparent.webp", "assets/sidequest-tourism/sidequest-master-overview.png"]) {
+for (const asset of ["assets/preview-desktop.png", "assets/bytewave-logo-transparent.webp", "assets/bytewave-favicon-512.png", "assets/apple-touch-icon.png", "assets/sidequest-tourism/sidequest-master-overview.png"]) {
   await access(new URL(asset, clientRoot));
 }
 
