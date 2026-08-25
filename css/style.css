@@ -2604,6 +2604,37 @@ h1,h2,h3{font-weight:500}
   .tourism-product-preview figcaption strong{display:none}
 }
 
+/* SideQuest.BN future product montage, paired with the Tourism master artwork. */
+.product-showcase-sidequest:before{
+  background:radial-gradient(circle,rgba(16,185,129,.28),rgba(212,175,55,.15) 46%,transparent 72%);
+}
+.sidequest-master-showcase{
+  position:absolute;
+  inset:0;
+  z-index:3;
+  width:100%;
+  height:100%;
+  margin:0;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.82);
+  border-radius:24px 8px 24px 8px;
+  background:linear-gradient(110deg,#011711,#063b2c 62%,#4b3a0d);
+  box-shadow:0 18px 42px rgba(11,42,67,.18),inset 0 1px 0 rgba(255,255,255,.65);
+}
+.sidequest-master-showcase img{
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:contain;
+  object-position:center;
+  transition:transform .7s cubic-bezier(.16,1,.3,1);
+}
+.product.is-active .sidequest-master-showcase:hover img{transform:scale(1.015)}
+
+@media(max-width:560px){
+  .sidequest-master-showcase{border-radius:18px 7px 18px 7px}
+}
+
 /* Center button labels while keeping their icons close and balanced. */
 .button,
 .nav-shell .menu-toggle,
@@ -2616,7 +2647,6 @@ h1,h2,h3{font-weight:500}
 .button{gap:.7rem}
 .nav-shell .header-project{gap:.65rem}
 .insight button{display:inline-flex;align-items:center;gap:.45rem}
-
 /* SEO copy keeps the existing hero hierarchy and visual rhythm. */
 .hero h1{
   max-inline-size:19ch;
@@ -2689,4 +2719,16 @@ img{height:auto}
 .service-carousel .service-card,
 .service-carousel .service-card:hover{
   border:0!important;
+}
+/* SideQuest.BN complete phone presentation. */
+.product-showcase-sidequest{
+  min-height:0;
+  touch-action:pan-y;
+}
+.sidequest-master-showcase{
+  background:#f7faf7;
+}
+.sidequest-master-showcase img{
+  object-fit:contain;
+  object-position:center;
 }
