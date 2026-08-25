@@ -30,7 +30,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20260825-sidequest1">
+  <link rel="stylesheet" href="css/style.css?v=20260825-product-viewer4">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -124,7 +124,7 @@
   }
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
-  <script src="js/main.js?v=20260824-web3forms1" defer></script>
+  <script src="js/main.js?v=20260825-product-viewer1" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -252,7 +252,10 @@
               <div class="product-body"><div class="product-copy"><p class="product-kicker">A ByteWave-owned digital platform</p><h3>SideQuest<span>.BN</span></h3><p>SideQuest.BN began with a simple question: what interesting things are happening nearby that people never hear about? We are building a place to make those opportunities easier to find.</p><div class="product-chips" aria-label="Product attributes"><span>Local platform</span><span>Early access</span></div></div></div>
               <div class="product-showcase product-showcase-sidequest">
                 <figure class="sidequest-master-showcase">
-                  <img src="assets/sidequest-bn/sidequest-bn-phone-showcase-quest-vault.png" alt="SideQuest.BN concept displayed across five phones in a bright studio, showing applicants, task posting, geofenced quest discovery, active task tracking and Quest Vault, with the SideQuest.BN identity integrated into the display base" loading="lazy">
+                  <button class="product-zoom-trigger" type="button" data-product-zoom aria-label="Enlarge the SideQuest.BN product preview">
+                    <img src="assets/sidequest-bn/sidequest-bn-phone-showcase-quest-vault.png" alt="SideQuest.BN concept displayed across five phones in a bright studio, showing applicants, task posting, geofenced quest discovery, active task tracking and Quest Vault, with the SideQuest.BN identity integrated into the display base" loading="lazy">
+                    <span class="product-zoom-hint" aria-hidden="true">View larger <b>↗</b></span>
+                  </button>
                 </figure>
               </div>
             </article>
@@ -262,7 +265,10 @@
               <div class="product-showcase product-showcase-tourism">
                 <div class="tourism-experience-showcase" aria-label="Featured Brunei experience concepts">
                   <figure class="tourism-product-preview">
-                    <img src="assets/sidequest-tourism/sidequest-master-overview.png" alt="SideQuest Tourism interface showing Brunei experience discovery, booking, passport and wallet screens" width="1672" height="941" loading="lazy" decoding="async">
+                    <button class="product-zoom-trigger" type="button" data-product-zoom aria-label="Enlarge the SideQuest Tourism product preview">
+                      <img src="assets/sidequest-tourism/sidequest-master-overview.png" alt="SideQuest Tourism interface showing Brunei experience discovery, booking, passport and wallet screens" width="1672" height="941" loading="lazy" decoding="async">
+                      <span class="product-zoom-hint" aria-hidden="true">View larger <b>↗</b></span>
+                    </button>
                   </figure>
                   <div class="tourism-experience-list">
                     <figure class="tourism-experience-card">
@@ -382,6 +388,13 @@
   <dialog class="insight-dialog" aria-labelledby="dialog-title">
     <div class="dialog-bar"><span>ByteWave notebook</span><button type="button" data-dialog-close aria-label="Close insight">Close ×</button></div>
     <div class="dialog-content"><p class="eyebrow" data-dialog-label></p><h2 id="dialog-title" data-dialog-title></h2><div data-dialog-body></div></div>
+  </dialog>
+
+  <dialog class="product-lightbox" aria-label="Enlarged product preview" data-product-lightbox>
+    <div class="product-lightbox-shell">
+      <button class="product-lightbox-close" type="button" data-product-lightbox-close aria-label="Close enlarged product preview">Close <span aria-hidden="true">×</span></button>
+      <img data-product-lightbox-image src="" alt="">
+    </div>
   </dialog>
 </body>
 </html>

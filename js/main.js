@@ -398,6 +398,52 @@
     updateProductState(false);
   }
 
+  const productLightbox = $('[data-product-lightbox]');
+  const productLightboxImage = $('[data-product-lightbox-image]', productLightbox);
+  const productLightboxClose = $('[data-product-lightbox-close]', productLightbox);
+  let productLightboxTrigger = null;
+  let productLightboxTimer = 0;
+
+  const closeProductLightbox = () => {
+    if (!productLightbox?.open) return;
+    productLightbox.classList.remove('is-open');
+    window.clearTimeout(productLightboxTimer);
+    const finish = () => {
+      if (productLightbox.open) productLightbox.close();
+      document.body.classList.remove('dialog-open');
+      productLightboxTrigger?.focus({ preventScroll: true });
+      productLightboxTrigger = null;
+    };
+    if (reducedMotion.matches) finish();
+    else productLightboxTimer = window.setTimeout(finish, 260);
+  };
+
+  $$('[data-product-zoom]').forEach((trigger) => {
+    trigger.addEventListener('click', () => {
+      const source = $('img', trigger);
+      if (!productLightbox || !productLightboxImage || !source) return;
+      productLightboxTrigger = trigger;
+      productLightboxImage.src = source.currentSrc || source.src;
+      productLightboxImage.alt = source.alt;
+      document.body.classList.add('dialog-open');
+      productLightbox.showModal();
+      requestAnimationFrame(() => productLightbox.classList.add('is-open'));
+      productLightboxClose?.focus({ preventScroll: true });
+    });
+  });
+  productLightboxClose?.addEventListener('click', closeProductLightbox);
+  productLightbox?.addEventListener('click', (event) => {
+    if (event.target === productLightbox) closeProductLightbox();
+  });
+  productLightbox?.addEventListener('cancel', (event) => {
+    event.preventDefault();
+    closeProductLightbox();
+  });
+  productLightbox?.addEventListener('close', () => {
+    productLightbox.classList.remove('is-open');
+    document.body.classList.remove('dialog-open');
+  });
+
   const processLine = $('.process-line');
   if (processLine && 'IntersectionObserver' in window && !reducedMotion.matches) {
     new IntersectionObserver(([entry]) => {
