@@ -1826,22 +1826,13 @@ html.section-snap-motion main>section.is-section-active>.wrap{
   background:currentColor;
   border:0;
   border-radius:999px;
+  box-shadow:0 -5px 0 0 currentColor,0 5px 0 0 currentColor;
   transform:none!important;
-  transform-origin:center;
   transition:background .22s ease!important;
 }
-.nav-shell .menu-icon i::before,
-.nav-shell .menu-icon i::after{
-  content:"";
-  position:absolute;
-  left:0;
-  width:18px;
-  height:2px;
-  border-radius:999px;
-  background:currentColor;
+.nav-shell .menu-toggle[aria-expanded="true"] .menu-icon i{
+  transform:none!important;
 }
-.nav-shell .menu-icon i::before{top:-5px}
-.nav-shell .menu-icon i::after{top:5px}
 .nav-shell .menu-toggle[aria-expanded="true"] .menu-icon i{
   transform:none!important;
 }

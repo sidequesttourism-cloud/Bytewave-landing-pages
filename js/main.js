@@ -359,7 +359,7 @@
 
     productCarousel.classList.add('is-enhanced');
     productCarousel.closest('.wrap')?.classList.add('has-product-carousel');
-    if (controls) controls.hidden = false;
+    if (controls && cards.length >= 2) controls.hidden = false;
     [previous, next, ...dots].filter(Boolean).forEach((control) => {
       control.addEventListener('pointerdown', (event) => {
         holdProductSection();
