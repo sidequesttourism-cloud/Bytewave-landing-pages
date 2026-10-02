@@ -50,7 +50,7 @@ module.exports = async function handler(req, res) {
   if (inquiry.name.length < 2 || !emailPattern.test(inquiry.email) || inquiry.message.length < 20) return reply(res, 422, { message: 'Please provide a valid name, email, and message.' });
 
   const apiKey = process.env.RESEND_API_KEY;
-  const recipient = process.env.INQUIRY_TO_EMAIL || 'Aziq.bytewavedigital@gmail.com';
+  const recipient = process.env.INQUIRY_TO_EMAIL || 'Aziq@bytewave-digitalbrunei.com';
   const sender = process.env.INQUIRY_FROM_EMAIL;
   if (!apiKey || !sender) return reply(res, 503, { message: 'Email delivery is temporarily unavailable. Please email us directly.' });
   const lines = [`Name: ${inquiry.name}`, `Email: ${inquiry.email}`, `Organisation: ${inquiry.organisation || '—'}`, `Service: ${inquiry.service || '—'}`, `Timeline: ${inquiry.timeline || '—'}`, '', inquiry.message];

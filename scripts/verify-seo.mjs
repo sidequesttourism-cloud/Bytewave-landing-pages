@@ -15,6 +15,8 @@ assert.equal((html.match(/<h1\b/g) || []).length, 1);
 assert.match(html, /<h1[^>]*>Web Development &amp; Digital Solutions in Brunei<\/h1>/);
 assert.match(html, /<link rel="icon" type="image\/png" sizes="512x512" href="\/assets\/bytewave-favicon-512\.png">/);
 assert.match(html, /<link rel="apple-touch-icon" sizes="180x180" href="\/assets\/apple-touch-icon\.png">/);
+assert.match(html, /mailto:Aziq@bytewave-digitalbrunei\.com/);
+assert.doesNotMatch(html, /Aziq\.bytewavedigital@gmail\.com/i);
 
 const description = html.match(/<meta name="description" content="([^"]+)">/)?.[1] || "";
 assert.ok(description.length >= 150 && description.length <= 160, `Meta description is ${description.length} characters`);
