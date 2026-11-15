@@ -74,9 +74,6 @@
     ]
   }
   </script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
   <script>
     /* Page scale on laptop and desktop screens (like browser zoom; phones and tablets stay at 100%).
        BASE: the design is shown at 110%, as if the browser were zoomed to 110%.
@@ -96,11 +93,14 @@
       addEventListener('resize', fit);
     })();
   </script>
+  <link rel="preload" href="assets/fonts/inter-var-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/space-grotesk-var-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="css/site.css">
   <script src="js/site.js" defer></script>
 </head>
 <body>
   <!-- Icons: Lucide (ISC licence, lucide.dev). Monochrome stroke, coloured by currentColor. -->
+  <!-- Icons below are from Lucide (https://lucide.dev), ISC License, Copyright (c) Lucide Icons and Contributors. Full licence: assets/icons-LICENSE.txt -->
   <svg class="sprite" aria-hidden="true" focusable="false">
     <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></symbol>
     <symbol id="i-terminal" viewBox="0 0 24 24"><path d="M12 19h8"/><path d="m4 17 6-6-6-6"/></symbol>
@@ -172,7 +172,7 @@
         <a href="#contact"><span class="mono">07</span>Contact</a>
       </nav>
       <div class="drawer-foot">
-        <a href="mailto:Aziq.bytewavedigital@gmail.com"><svg class="i" aria-hidden="true"><use href="#i-mail"/></svg>Aziq.bytewavedigital@gmail.com</a>
+        <a href="mailto:Aziq@bytewave-digitalbrunei.com"><svg class="i" aria-hidden="true"><use href="#i-mail"/></svg>Aziq@bytewave-digitalbrunei.com</a>
         <a href="https://wa.me/6738194908" target="_blank" rel="noopener noreferrer"><svg class="i" aria-hidden="true"><use href="#i-message-circle"/></svg>WhatsApp +673 819 4908</a>
       </div>
     </div>
@@ -795,7 +795,7 @@
           <p class="contact-lead reveal">It does not need to be a finished brief. Tell us what you are trying to do, what is getting in the way, or simply what you have been thinking about.</p>
           <a class="btn btn-primary btn-lg" href="https://wa.me/6738194908?text=Hi%20ByteWave%2C%20I%27d%20like%20to%20talk%20about%20a%20project." target="_blank" rel="noopener noreferrer" data-magnetic><svg class="i" aria-hidden="true"><use href="#i-message-circle"/></svg><span>Chat on WhatsApp</span></a>
           <ul class="contact-list">
-            <li><svg class="i" aria-hidden="true"><use href="#i-mail"/></svg><a href="mailto:Aziq.bytewavedigital@gmail.com">Aziq.bytewavedigital@gmail.com</a></li>
+            <li><svg class="i" aria-hidden="true"><use href="#i-mail"/></svg><a href="mailto:Aziq@bytewave-digitalbrunei.com">Aziq@bytewave-digitalbrunei.com</a></li>
             <li><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg><a href="tel:+6738194908">+673 819 4908</a></li>
             <li><svg class="i" aria-hidden="true"><use href="#i-map-pin"/></svg><span>Bandar Seri Begawan, Brunei</span></li>
           </ul>
@@ -824,6 +824,7 @@
           </fieldset>
           <div class="field"><textarea id="f-msg" name="message" rows="4" required minlength="20" maxlength="3000" placeholder=" "></textarea><label for="f-msg">Tell us about your idea</label></div>
           <div class="msg-meter" aria-hidden="true" data-meter><span></span><em>0 / 20 characters</em></div>
+          <p class="form-note">By sending this form you agree that we use your details to reply to you, as set out in our <a href="privacy.html">Privacy Policy</a>.</p>
           <div class="form-foot">
             <button class="btn btn-primary" type="submit" data-magnetic><span>Send message</span><svg class="i" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
             <p class="form-status" role="status" aria-live="polite" data-form-status></p>
@@ -854,7 +855,7 @@
         </div>
         <div class="footer-col">
           <p class="footer-h">Contact</p>
-          <a href="mailto:Aziq.bytewavedigital@gmail.com">Email</a>
+          <a href="mailto:Aziq@bytewave-digitalbrunei.com">Email</a>
           <a href="tel:+6738194908">+673 819 4908</a>
           <a href="https://wa.me/6738194908" target="_blank" rel="noopener noreferrer">WhatsApp</a>
           <span>Bandar Seri Begawan, Brunei</span>
@@ -862,6 +863,7 @@
       </div>
       <div class="footer-bottom">
         <span>© <span data-year>2026</span> ByteWave Digital Enterprise</span>
+        <span class="footer-legal"><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms of Use</a></span>
         <a class="to-top" href="#home">Back to top<svg class="i" aria-hidden="true"><use href="#i-arrow-up"/></svg></a>
       </div>
     </div>
