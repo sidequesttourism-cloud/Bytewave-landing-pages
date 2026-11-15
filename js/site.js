@@ -259,6 +259,13 @@
     const step = lite ? 22 : 14;
     let w = 0; let h = 0; let raf = 0; let visible = true; let last = 0; let t = 0;
     let px = -9999; let py = -9999;
+    // Landing ripple: set when the coin's first impact ring starts (see .coin-impact in the CSS).
+    const ripple = { t0: -1, x: 0, y: 0 };
+    $('.coin-impact')?.addEventListener('animationstart', (e) => {
+      if (e.animationName !== 'impact-ring') return;
+      const c = canvas.getBoundingClientRect(); const s = e.target.getBoundingClientRect();
+      ripple.x = s.left + s.width / 2 - c.left; ripple.y = s.top + s.height / 2 - c.top; ripple.t0 = performance.now();
+    });
 
     const resize = () => {
       const r = canvas.getBoundingClientRect();
@@ -292,6 +299,15 @@
           const dx = x - px; const dy = baseY - py;
           const d2 = dx * dx + dy * dy;
           y -= Math.exp(-d2 / 16000) * 46 * (0.4 + k);
+          if (ripple.t0 >= 0) {
+            const age = performance.now() - ripple.t0;               // ms since landing
+            if (age < 1800) {
+              const rx = x - ripple.x; const ry = (baseY - ripple.y) * 1.8; // flattened, like a ring on the ground
+              const dist = Math.sqrt(rx * rx + ry * ry);
+              const front = age * 0.9;                                  // ring radius grows ~900px per second
+              y += Math.exp(-((dist - front) ** 2) / 2600) * 30 * (1 - age / 1800) * Math.sin((dist - front) * 0.05);
+            } else ripple.t0 = -1;
+          }
           if (x === -step) ctx.moveTo(x, y); else ctx.lineTo(x, y);
         }
         ctx.strokeStyle = accent
