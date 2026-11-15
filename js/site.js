@@ -197,16 +197,18 @@
 
     // Hero glow + logo tilt
     const glow = $('.hero-glow');
-    const orbit = $('.orbit');
+    const coin = $('[data-coin]');
     hero?.addEventListener('pointermove', (e) => {
       const r = hero.getBoundingClientRect();
       const px = (e.clientX - r.left) / r.width;
       const py = (e.clientY - r.top) / r.height;
       glow?.style.setProperty('--gx', `${px * 100}%`);
       glow?.style.setProperty('--gy', `${py * 100}%`);
-      if (motionOn && orbit) {
-        orbit.style.setProperty('--ry', `${(px - 0.5) * 16}deg`);
-        orbit.style.setProperty('--rx', `${(0.5 - py) * 12}deg`);
+      if (motionOn && coin) {
+        coin.style.setProperty('--ry', `${(px - 0.5) * 30}deg`);
+        coin.style.setProperty('--rx', `${(0.5 - py) * 20}deg`);
+        coin.style.setProperty('--tx', ((px - 0.5) * 2).toFixed(3));
+        coin.nextElementSibling?.style.setProperty('--tx', ((px - 0.5) * 2).toFixed(3));
       }
       pointer.x = e.clientX - r.left;
       pointer.y = e.clientY - r.top;
@@ -214,8 +216,16 @@
     });
     hero?.addEventListener('pointerleave', () => {
       pointer.active = false;
-      orbit?.style.setProperty('--rx', '0deg');
-      orbit?.style.setProperty('--ry', '0deg');
+      coin?.style.setProperty('--rx', '0deg');
+      coin?.style.setProperty('--ry', '0deg');
+      coin?.style.setProperty('--tx', '0');
+      coin?.nextElementSibling?.style.setProperty('--tx', '0');
+    });
+
+    coin?.addEventListener('click', () => {
+      if (!motionOn || coin.classList.contains('is-flipping')) return;
+      coin.classList.add('is-flipping');
+      coin.addEventListener('animationend', (e) => { if (e.animationName === 'coin-flip') coin.classList.remove('is-flipping'); });
     });
 
     // Contact glow
