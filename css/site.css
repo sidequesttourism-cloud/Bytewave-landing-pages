@@ -219,27 +219,67 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   position: relative; isolation: isolate;
   min-height: calc(100svh / var(--vz, 1));
   display: grid; align-items: center;
-  padding-block: 112px 56px;
+  padding-block: 104px 48px;
   background: var(--navy-deep);
   color: var(--on-dark);
   overflow: clip;
 }
-.hero-canvas { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; }
 .hero-glow {
   --gx: 70%; --gy: 40%;
   position: absolute; inset: 0; z-index: -1; pointer-events: none;
   background: radial-gradient(600px circle at var(--gx) var(--gy), rgb(14 122 92 / .22), transparent 60%);
 }
-.hero-grid { display: grid; grid-template-columns: 1.15fr .85fr; align-items: center; gap: clamp(32px, 5vw, 80px); }
-.hero-title { font-size: clamp(2.75rem, 7.4vw, 6.25rem); line-height: .98; letter-spacing: -.045em; }
+.hero-grid { display: flex; justify-content: center; text-align: center; }
+.hero-copy { display: flex; flex-direction: column; align-items: center; max-width: 900px; }
+.hero-copy .hero-visual { width: clamp(118px, 11vw, 160px); margin-bottom: clamp(22px, 3vh, 34px); }
+/* Top-down desk photo behind the whole hero. A dark centre and a navy bottom edge keep the text readable
+   and blend the photo into the next section. */
+.hero-bg { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; }
+.hero::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(48% 62% at 50% 50%, rgb(7 28 45 / .62), rgb(7 28 45 / .2) 70%, transparent),
+              linear-gradient(180deg, rgb(7 28 45 / .55) 0%, transparent 18%, transparent 78%, var(--navy-deep) 100%);
+}
+.hero-title { font-size: clamp(2.75rem, 6vw, 5.5rem); line-height: .98; letter-spacing: -.045em; }
 .hero-title .line { display: block; overflow: clip; padding-bottom: .08em; }
 .hero-title .line-in { display: inline-block; }
 .rotator { position: relative; display: inline-block; color: var(--mint); }
+.rotator { perspective: 700px; }
 .rotator-word { display: inline-block; }
-.rotator-word.is-out { animation: word-out .35s var(--ease) both; }
-.rotator-word.is-in { animation: word-in .55s var(--ease) both; }
-.hero-lead { max-width: 52ch; margin-top: 28px; font-size: clamp(1rem, 1.3vw, 1.125rem); color: var(--on-dark-2); }
-.hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 36px; }
+/* Split-flap letters: each flip drops down from the top edge like a departure-board tile. */
+.flap { display: inline-block; transform-origin: 50% 55%; }
+.flap.is-pre { opacity: 0; }
+.flap.is-flip { animation: flap .14s cubic-bezier(.3, .8, .4, 1.25); }
+.flap:not(.is-set) { opacity: .55; }
+.flap.is-set { opacity: 1; }
+@keyframes flap { from { transform: rotateX(-95deg); } }
+/* Glitch: two tinted copies of the incoming word (red and cyan) tear in through jumping slices. */
+.rotator-word { position: relative; }
+.rotator-word::before, .rotator-word::after {
+  content: attr(data-text); position: absolute; left: 0; top: 0; white-space: nowrap; opacity: 0; pointer-events: none;
+}
+.rotator-word.is-glitch { animation: glitch-main .52s steps(1) both; }
+.rotator-word.is-glitch::before { opacity: 1; color: #ff4f6d; mix-blend-mode: screen; animation: glitch-a .52s steps(1) both; }
+.rotator-word.is-glitch::after { opacity: 1; color: #4fd8ff; mix-blend-mode: screen; animation: glitch-b .52s steps(1) both; }
+@keyframes glitch-main {
+  0% { translate: 0 0; } 8% { translate: -3px 1px; skew: -8deg; } 16% { translate: 4px -1px; skew: 6deg; color: transparent; }
+  32% { translate: -2px 0; skew: 0deg; color: transparent; } 40% { translate: 0 0; color: var(--mint); } 56% { translate: 2px 0; }
+  64% { translate: 0 0; } 100% { translate: 0 0; skew: 0deg; }
+}
+@keyframes glitch-a {
+  0% { clip-path: inset(10% 0 70% 0); translate: -10px 0; } 12% { clip-path: inset(55% 0 20% 0); translate: 8px 0; }
+  24% { clip-path: inset(30% 0 45% 0); translate: -6px 0; } 36% { clip-path: inset(75% 0 5% 0); translate: 12px 0; }
+  48% { clip-path: inset(5% 0 80% 0); translate: -4px 0; } 60% { clip-path: inset(40% 0 40% 0); translate: 5px 0; }
+  76% { clip-path: inset(0 0 0 0); translate: -2px 0; opacity: .6; } 100% { clip-path: inset(0 0 0 0); translate: 0 0; opacity: 0; }
+}
+@keyframes glitch-b {
+  0% { clip-path: inset(60% 0 15% 0); translate: 10px 0; } 12% { clip-path: inset(15% 0 65% 0); translate: -8px 0; }
+  24% { clip-path: inset(70% 0 10% 0); translate: 6px 0; } 36% { clip-path: inset(20% 0 55% 0); translate: -12px 0; }
+  48% { clip-path: inset(45% 0 30% 0); translate: 4px 0; } 60% { clip-path: inset(85% 0 0 0); translate: -5px 0; }
+  76% { clip-path: inset(0 0 0 0); translate: 2px 0; opacity: .6; } 100% { clip-path: inset(0 0 0 0); translate: 0 0; opacity: 0; }
+}
+.hero-lead { max-width: 46ch; margin-top: 24px; font-size: clamp(1rem, 1.3vw, 1.125rem); color: var(--on-dark-2); }
+.hero-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 34px; }
 
 
 /* Tap-to-pause: the whole hero is the control; this button is the keyboard route. */
@@ -261,10 +301,10 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   /* The hero text falls in with the coin and stacks from the bottom up, so nothing falls through text that has
      already landed: the buttons land with the coin (~.9s), then the paragraph, line 2 and line 1 (~1.25s). */
   .js .hero-title .line { overflow: visible; }
-  .js [data-intro] { transform-origin: 50% 100%; animation: text-drop .95s calc((5 - var(--d)) * 120ms + 230ms) both; }
+  .js [data-intro] { transform-origin: 50% 100%; animation: text-drop .95s calc((5 - var(--d)) * 110ms + 150ms) both; }
   /* The menu bar arrives last, after everything has landed, so nothing falls through it.
      "backwards" only: once done it hands translate back to the scroll-hide rule. */
-  .js .header-bar { animation: header-in .6s cubic-bezier(.2, .8, .3, 1) 1.45s backwards; }
+  .js .header-bar { animation: header-in .6s cubic-bezier(.2, .8, .3, 1) 2s backwards; }
 }
 
 /* Global pause: every looping CSS animation on the page stops. */
@@ -278,7 +318,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 @property --flip { syntax: '<angle>'; inherits: true; initial-value: 0deg; }
 @property --rx { syntax: '<angle>'; inherits: true; initial-value: 0deg; }
 @property --ry { syntax: '<angle>'; inherits: true; initial-value: 0deg; }
-.hero-visual { justify-self: center; width: min(100%, 420px); perspective: 1100px; }
+.hero-visual { perspective: 1100px; }
 .coin-stage { position: relative; aspect-ratio: 1; }
 .coin {
   --rx: 0deg; --ry: 0deg; --tx: 0; --ty: 0;
@@ -297,31 +337,28 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .coin-face { position: absolute; inset: 0; width: 100%; height: auto; transform: translateZ(1px); backface-visibility: hidden; }
 .coin-sheen {
   transform: translateZ(2px); pointer-events: none; overflow: hidden; mix-blend-mode: screen; backface-visibility: hidden;
-  background: linear-gradient(115deg, transparent 30%, rgb(255 255 255 / .28) 46%, rgb(255 255 255 / .06) 56%, transparent 66%);
+  background: linear-gradient(115deg, transparent 34%, rgb(255 255 255 / .11) 47%, rgb(255 255 255 / .03) 55%, transparent 64%);
   background-size: 260% 100%; background-position: calc(50% - var(--tx) * 60%) 0;
   transition: background-position .5s var(--ease);
 }
-.coin-impact {
-  position: absolute; left: 6%; right: 6%; bottom: -10%; height: 13%; border-radius: 50%; pointer-events: none;
-  border: 2px solid rgb(92 207 166 / .9); box-shadow: 0 0 18px rgb(92 207 166 / .45), inset 0 0 12px rgb(92 207 166 / .35); opacity: 0;
-}
-.sparks { position: absolute; left: 50%; bottom: -4%; width: 0; height: 0; pointer-events: none; }
-.spark { position: absolute; left: 0; top: 0; width: var(--s); height: var(--s); margin: calc(var(--s) / -2); border-radius: 50%; background: var(--mint); box-shadow: 0 0 8px rgb(92 207 166 / .9); opacity: 0; }
-.spark:nth-child(3n) { background: var(--cloud); box-shadow: 0 0 8px rgb(247 245 241 / .8); }
+/* Entrance only: two halves of the logo split by a zigzag crack. Hidden otherwise (and with reduced motion). */
+.coin-half { position: absolute; inset: 0; width: 100%; height: auto; opacity: 0; pointer-events: none; }
+.hl { clip-path: polygon(0% 0%, 52% 0%, 47% 12%, 54% 24%, 46% 37%, 53% 50%, 45% 62%, 52% 75%, 46% 88%, 51% 100%, 0% 100%); }
+.hr { clip-path: polygon(52% 0%, 47% 12%, 54% 24%, 46% 37%, 53% 50%, 45% 62%, 52% 75%, 46% 88%, 51% 100%, 100% 100%, 100% 0%); }
 .coin-shadow {
-  position: absolute; left: 18%; right: 18%; bottom: -9%; height: 9%; border-radius: 50%;
-  background: radial-gradient(closest-side, rgb(0 0 0 / .5), transparent);
-  translate: calc(var(--tx, 0) * -14px) 0; filter: blur(4px);
+  position: absolute; inset: 4%; z-index: -1; border-radius: 50%; background: rgb(0 0 0 / .55);
+  translate: calc(8px - var(--tx, 0) * 6px) 12px; filter: blur(10px);
 }
 @media (prefers-reduced-motion: no-preference) {
   /* Entrance timeline: drop starts at .15s, lands at .9s, bounces land at 1.4s and 1.65s, settled by 1.85s. */
-  .js .coin { animation: coin-drop 1.7s .15s both, coin-sway 9s ease-in-out 2.2s infinite; }
-  .js .coin-shadow { animation: shadow-drop 1.7s .15s both; }
-  .js .coin-impact { animation: impact-ring .9s cubic-bezier(.2, .7, .3, 1) .9s forwards; }
-  .js .coin-impact.i2 { animation: impact-ring-small .7s cubic-bezier(.2, .7, .3, 1) 1.4s forwards; }
-  .js .spark { animation: spark 1s cubic-bezier(.15, .7, .35, 1) .9s forwards; }
-  .js .hero-grid { animation: hero-jolt .45s ease-out .9s both; }
-  .coin.is-flipping { animation: coin-flip .9s cubic-bezier(.3, 1.35, .5, 1), coin-sway 9s ease-in-out infinite; }
+  /* Halves drift in from either side (.95s), slow down, then snap together at 1.65s.
+     The whole coin takes over at that moment with a small knock and wobble. */
+  .js .hl { animation: half-l 1s .65s both, half-off .01s 1.65s forwards; }
+  .js .hr { animation: half-r 1s .65s both, half-off .01s 1.65s forwards; }
+  .js .coin { animation: coin-join .9s 1.65s both; }
+  .js .coin-shadow { animation: shadow-join 1s .65s both; }
+  .js .hero-bg { animation: photo-in 1.4s var(--ease) both; }
+  .coin.is-flipping { animation: coin-flip .9s cubic-bezier(.3, 1.35, .5, 1); }
 }
 @keyframes header-in { from { translate: 0 -120px; opacity: 0; } }
 @keyframes text-drop {
@@ -345,22 +382,72 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   93% { translate: 0 -5px; animation-timing-function: cubic-bezier(.55, 0, 1, .45); }
   100% { translate: 0 0; --flip: 0deg; scale: 1; }
 }
-@keyframes coin-sway { 0%, 100% { --sway: -7deg; } 50% { --sway: 7deg; } }
+/* A coin set down on a table: it rocks on its rim while the tilt circles around faster and smaller, then lies flat. */
+@keyframes coin-settle {
+  0% { scale: 1.14; opacity: 0; rotate: 1 0 0 0deg; animation-timing-function: cubic-bezier(.5, 0, .9, .5); }
+  14% { opacity: 1; }
+  30% { scale: 1; rotate: 1 0 0 14deg; }
+  40% { rotate: 0 1 0 12deg; }
+  48% { rotate: -1 0 0 10deg; }
+  55% { rotate: 0 -1 0 8deg; }
+  61% { rotate: 1 0 0 6.5deg; }
+  66% { rotate: 0 1 0 5deg; }
+  70.5% { rotate: -1 0 0 3.8deg; }
+  74.5% { rotate: 0 -1 0 2.8deg; }
+  78% { rotate: 1 0 0 2deg; }
+  81% { rotate: 0 1 0 1.3deg; }
+  84% { rotate: -1 0 0 0.8deg; }
+  87% { rotate: 0 -1 0 0.4deg; }
+  100% { scale: 1; opacity: 1; rotate: 1 0 0 0deg; }
+}
+@keyframes shadow-settle {
+  0% { opacity: 0; translate: 46px 64px; filter: blur(26px); scale: 1.12; animation-timing-function: cubic-bezier(.5, 0, .9, .5); }
+  30% { opacity: 1; translate: 8.0px -0.6px; filter: blur(10px); scale: 1; }
+  40% { opacity: 1; translate: 18.8px 12.0px; filter: blur(10px); scale: 1; }
+  48% { opacity: 1; translate: 8.0px 21.0px; filter: blur(10px); scale: 1; }
+  55% { opacity: 1; translate: 0.8px 12.0px; filter: blur(10px); scale: 1; }
+  61% { opacity: 1; translate: 8.0px 6.1px; filter: blur(10px); scale: 1; }
+  66% { opacity: 1; translate: 12.5px 12.0px; filter: blur(10px); scale: 1; }
+  70.5% { opacity: 1; translate: 8.0px 15.4px; filter: blur(10px); scale: 1; }
+  74.5% { opacity: 1; translate: 5.5px 12.0px; filter: blur(10px); scale: 1; }
+  78% { opacity: 1; translate: 8.0px 10.2px; filter: blur(10px); scale: 1; }
+  81% { opacity: 1; translate: 9.2px 12.0px; filter: blur(10px); scale: 1; }
+  84% { opacity: 1; translate: 8.0px 12.7px; filter: blur(10px); scale: 1; }
+  87% { opacity: 1; translate: 7.6px 12.0px; filter: blur(10px); scale: 1; }
+  100% { opacity: 1; translate: 8px 12px; filter: blur(10px); scale: 1; }
+}
+@keyframes half-l {
+  0% { opacity: 0; translate: -260% 10%; rotate: -24deg; animation-timing-function: cubic-bezier(.2, .7, .4, 1); }
+  20% { opacity: 1; }
+  72% { opacity: 1; translate: -40% 2%; rotate: -6deg; animation-timing-function: cubic-bezier(.7, 0, 1, .6); }
+  100% { opacity: 1; translate: 0 0; rotate: 0deg; }
+}
+@keyframes half-r {
+  0% { opacity: 0; translate: 260% -10%; rotate: 24deg; animation-timing-function: cubic-bezier(.2, .7, .4, 1); }
+  20% { opacity: 1; }
+  72% { opacity: 1; translate: 40% -2%; rotate: 6deg; animation-timing-function: cubic-bezier(.7, 0, 1, .6); }
+  100% { opacity: 1; translate: 0 0; rotate: 0deg; }
+}
+@keyframes half-off { to { opacity: 0; } }
+@keyframes coin-join {
+  0% { opacity: 0; }
+  1% { opacity: 1; scale: 1.06 .95; rotate: 1 0 0 0deg; }
+  14% { scale: .98 1.02; }
+  24% { scale: 1; rotate: 1 0 0 5deg; }
+  38% { rotate: 0 1 0 4deg; }
+  52% { rotate: -1 0 0 3deg; }
+  64% { rotate: 0 -1 0 2deg; }
+  76% { rotate: 1 0 0 1deg; }
+  100% { opacity: 1; scale: 1; rotate: 1 0 0 0deg; }
+}
+@keyframes shadow-join { from { opacity: 0; scale: .7; } }
 @keyframes coin-flip { from { --flip: 0deg; } to { --flip: 360deg; } }
 @keyframes shadow-drop {
   0% { opacity: 0; scale: .2; } 44% { opacity: 1; scale: 1.12; } 59% { opacity: .65; scale: .78; }
   73.5% { opacity: 1; scale: 1.05; } 81% { opacity: .85; scale: .92; } 88%, 100% { opacity: 1; scale: 1; }
 }
-@keyframes impact-ring { from { opacity: .95; scale: .35; } to { opacity: 0; scale: 2.3; } }
-@keyframes impact-ring-small { from { opacity: .6; scale: .4; } to { opacity: 0; scale: 1.4; } }
-@keyframes spark {
-  0% { opacity: 0; translate: 0 0; scale: 1; }
-  8% { opacity: 1; }
-  70% { opacity: .9; }
-  100% { opacity: 0; translate: calc(cos(var(--a)) * var(--r)) calc(sin(var(--a)) * var(--r) + 40px); scale: .4; }
-}
-@keyframes hero-jolt { 0% { translate: 0 0; } 20% { translate: 0 5px; } 45% { translate: 0 -2px; } 70% { translate: 0 1px; } 100% { translate: 0 0; } }
-
+@keyframes photo-in { from { opacity: 0; scale: 1.06; } }
+/* From above: the coin comes down toward the desk (shrinks from close to the camera), spinning, then settles. */
 /* ---------- Deck: mission-control view of everything we build (normal scroll, nothing pinned) ---------- */
 .deck {
   position: relative; isolation: isolate; overflow: clip;
@@ -1214,8 +1301,6 @@ html:has(dialog[open]) { overflow: hidden; }
 @keyframes lit { to { opacity: 1; } }
 @keyframes grow-y { from { transform: scaleY(0); } to { transform: scaleY(1); } }
 @keyframes scale-in { from { opacity: .3; scale: .88; } to { opacity: 1; scale: 1; } }
-@keyframes word-out { to { opacity: 0; translate: 0 -40%; filter: blur(6px); } }
-@keyframes word-in { from { opacity: 0; translate: 0 40%; filter: blur(6px); } }
 /* scenes */
 @keyframes build { 0%, 6% { scale: 0 1; } 18%, 82% { scale: 1 1; } 94%, 100% { scale: 0 1; } }
 @keyframes cur-web { 0%, 10% { transform: translate(196px, 118px); } 45% { transform: translate(64px, 104px); } 50% { transform: translate(64px, 104px) scale(.85); } 55%, 85% { transform: translate(64px, 104px); } 100% { transform: translate(196px, 118px); } }
@@ -1259,8 +1344,8 @@ html:has(dialog[open]) { overflow: hidden; }
 }
 @media (max-width: 860px) {
   .hero { padding-top: 104px; }
-  .hero-grid { grid-template-columns: 1fr; }
-  .hero-visual { width: min(72vw, 340px); order: -1; margin-bottom: -8px; }
+  .hero-bg { object-position: 50% 50%; }
+  .hero::before { background: linear-gradient(180deg, rgb(7 28 45 / .7), rgb(7 28 45 / .45) 40%, rgb(7 28 45 / .7) 80%, var(--navy-deep)); }
   .showcase, .process-grid, .faq-grid, .contact-grid { grid-template-columns: 1fr; }
   .process-head { position: static; }
   .showcase, .showcase.flip { grid-template-columns: 1fr; gap: 28px; padding-top: 56px; }

@@ -157,20 +157,50 @@
     const words = ['websites', 'software', 'automation', 'digital products'];
     let i = 0;
     let timer = 0;
+    // Split-flap roll, like an airport departures board: each letter flips through a couple of random
+    // letters before landing on the right one, left to right.
+    const abc = 'abcdefghijklmnopqrstuvwxyz';
+    const rand = () => abc[Math.floor(Math.random() * abc.length)];
+    const flipTo = (word) => {
+      rot.replaceChildren();
+      [...word].forEach((ch, k) => {
+        const s = document.createElement('span');
+        s.className = 'flap is-pre';
+        s.textContent = ch === ' ' ? ' ' : rand();
+        rot.append(s);
+        if (ch === ' ') { s.classList.remove('is-pre'); return; }
+        let n = 0;
+        const tick = () => {
+          n += 1;
+          s.classList.remove('is-pre', 'is-flip');
+          void s.offsetWidth;                                 // restart the flip animation
+          s.textContent = n < 3 ? rand() : ch;
+          s.classList.add('is-flip');
+          if (n === 3) s.classList.add('is-set');
+          if (n < 3) timer = setTimeout(tick, 75);
+        };
+        setTimeout(tick, k * 45);
+      });
+    };
+    // Glitch swap: the new word tears in through RGB-split slices while the old one jitters out.
+    const glitchTo = (word) => {
+      rot.dataset.text = word;
+      rot.classList.remove('is-glitch');
+      void rot.offsetWidth;
+      rot.classList.add('is-glitch');
+      setTimeout(() => { rot.textContent = word; }, 170);
+      setTimeout(() => rot.classList.remove('is-glitch'), 520);
+    };
+    // Default is the glitch; add ?rotator=flap to the address to see the split-flap version.
+    const style = new URLSearchParams(location.search).get('rotator') === 'flap' ? flipTo : glitchTo;
     const swap = () => {
       if (!motionOn) { rot.textContent = words.at(-1); return; }
-      rot.classList.remove('is-in');
-      rot.classList.add('is-out');
-      setTimeout(() => {
-        rot.textContent = words[i];
-        rot.classList.remove('is-out');
-        rot.classList.add('is-in');
-        i += 1;
-        if (i < words.length) timer = setTimeout(swap, 1500);
-      }, 340);
+      style(words[i]);
+      i += 1;
+      if (i < words.length) timer = setTimeout(swap, 1900);
     };
     timer = setTimeout(swap, 1700);
-    listeners.add((on) => { if (!on) { clearTimeout(timer); rot.classList.remove('is-in', 'is-out'); rot.textContent = words.at(-1); } });
+    listeners.add((on) => { if (!on) { clearTimeout(timer); rot.textContent = words.at(-1); } });
   }
 
   /* ---------- Pointer effects (fine pointers, motion allowed) ---------- */
@@ -210,12 +240,8 @@
         coin.style.setProperty('--tx', ((px - 0.5) * 2).toFixed(3));
         coin.nextElementSibling?.style.setProperty('--tx', ((px - 0.5) * 2).toFixed(3));
       }
-      pointer.x = e.clientX - r.left;
-      pointer.y = e.clientY - r.top;
-      pointer.active = true;
     });
     hero?.addEventListener('pointerleave', () => {
-      pointer.active = false;
       coin?.style.setProperty('--rx', '0deg');
       coin?.style.setProperty('--ry', '0deg');
       coin?.style.setProperty('--tx', '0');
@@ -249,91 +275,6 @@
     });
   }
 
-  /* ---------- Hero wave field (canvas) ---------- */
-  const pointer = { x: -9999, y: -9999, active: false };
-  const canvas = $('[data-wave]');
-  if (canvas) {
-    const ctx = canvas.getContext('2d');
-    const dpr = Math.min(devicePixelRatio || 1, lite ? 1 : 1.5);
-    const rows = lite ? 14 : 24;
-    const step = lite ? 22 : 14;
-    let w = 0; let h = 0; let raf = 0; let visible = true; let last = 0; let t = 0;
-    let px = -9999; let py = -9999;
-    // Landing ripple: set when the coin's first impact ring starts (see .coin-impact in the CSS).
-    const ripple = { t0: -1, x: 0, y: 0 };
-    $('.coin-impact')?.addEventListener('animationstart', (e) => {
-      if (e.animationName !== 'impact-ring') return;
-      const c = canvas.getBoundingClientRect(); const s = e.target.getBoundingClientRect();
-      ripple.x = s.left + s.width / 2 - c.left; ripple.y = s.top + s.height / 2 - c.top; ripple.t0 = performance.now();
-    });
-
-    const resize = () => {
-      const r = canvas.getBoundingClientRect();
-      w = r.width; h = r.height;
-      canvas.width = Math.round(w * dpr);
-      canvas.height = Math.round(h * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      draw();
-    };
-
-    const draw = () => {
-      ctx.clearRect(0, 0, w, h);
-      // ease the pointer so the wave follows smoothly
-      const tx = pointer.active ? pointer.x : -9999;
-      const ty = pointer.active ? pointer.y : -9999;
-      px += (tx - px) * 0.08; py += (ty - py) * 0.08;
-      if (!pointer.active && px < -2000) { px = -9999; py = -9999; }
-
-      for (let r = 0; r < rows; r += 1) {
-        const k = r / (rows - 1);                    // 0 top row, 1 bottom row
-        const baseY = h * (0.38 + Math.pow(k, 1.35) * 0.66);
-        const amp = 10 + k * 34;
-        const freq = 0.0032 + (1 - k) * 0.0022;
-        const speed = 0.0005 + k * 0.0004;           // radians per ms
-        const accent = r % 6 === 3;
-        ctx.beginPath();
-        for (let x = -step; x <= w + step; x += step) {
-          let y = baseY
-            + Math.sin(x * freq + t * speed + r * 0.42) * amp
-            + Math.sin(x * freq * 0.45 - t * 0.0004 + r) * amp * 0.5;
-          const dx = x - px; const dy = baseY - py;
-          const d2 = dx * dx + dy * dy;
-          y -= Math.exp(-d2 / 16000) * 46 * (0.4 + k);
-          if (ripple.t0 >= 0) {
-            const age = performance.now() - ripple.t0;               // ms since landing
-            if (age < 1800) {
-              const rx = x - ripple.x; const ry = (baseY - ripple.y) * 1.8; // flattened, like a ring on the ground
-              const dist = Math.sqrt(rx * rx + ry * ry);
-              const front = age * 0.9;                                  // ring radius grows ~900px per second
-              y += Math.exp(-((dist - front) ** 2) / 2600) * 30 * (1 - age / 1800) * Math.sin((dist - front) * 0.05);
-            } else ripple.t0 = -1;
-          }
-          if (x === -step) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-        }
-        ctx.strokeStyle = accent
-          ? `rgba(92, 207, 166, ${0.12 + k * 0.28})`
-          : `rgba(247, 245, 241, ${0.03 + k * 0.1})`;
-        ctx.lineWidth = accent ? 1.2 : 1;
-        ctx.stroke();
-      }
-    };
-
-    const frame = (now) => {
-      raf = requestAnimationFrame(frame);
-      const minGap = lite ? 33 : 16;
-      if (now - last < minGap) return;
-      t += Math.min(now - last, 50);
-      last = now;
-      draw();
-    };
-    const start = () => { if (!raf && motionOn && visible && !document.hidden) { last = performance.now(); raf = requestAnimationFrame(frame); } };
-    const stop = () => { cancelAnimationFrame(raf); raf = 0; };
-
-    new ResizeObserver(resize).observe(canvas);
-    new IntersectionObserver(([e]) => { visible = e.isIntersecting; visible ? start() : stop(); }).observe(canvas);
-    document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
-    listeners.add((on) => (on ? start() : (stop(), draw())));
-  }
 
   /* ---------- Contact form: validates here, then posts to Web3Forms (same account as the old site) ---------- */
   const form = $('[data-form]');
