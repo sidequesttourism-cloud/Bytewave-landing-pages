@@ -1029,7 +1029,7 @@ h2 { font-size: clamp(2.25rem, 4.8vw, 4.25rem); line-height: 1.02; letter-spacin
 .step {
   position: relative; display: grid; grid-template-columns: 1fr; gap: 16px;
   padding: 28px; border: 1px solid var(--line-dark); border-radius: var(--r-lg);
-  background: rgb(247 245 241 / .03);
+  background: color-mix(in srgb, rgb(247 245 241) 3%, var(--navy-deep));   /* solid, so the flow lines pass behind the card */
   transition: background-color var(--mid), border-color var(--mid);
 }
 .step-node {
@@ -1040,7 +1040,7 @@ h2 { font-size: clamp(2.25rem, 4.8vw, 4.25rem); line-height: 1.02; letter-spacin
   transition: background-color var(--mid), color var(--mid), rotate .6s var(--ease);
 }
 .step-node .i { width: 18px; height: 18px; }
-.step:hover { background: rgb(247 245 241 / .06); border-color: rgb(247 245 241 / .24); }
+.step:hover { background: color-mix(in srgb, rgb(247 245 241) 6%, var(--navy-deep)); border-color: rgb(247 245 241 / .24); }
 .step:hover .step-node { background: var(--mint); color: var(--navy-deep); rotate: -8deg; }
 .step h3 { font-size: 1.5rem; letter-spacing: -.02em; margin-bottom: 8px; }
 .step p { color: var(--on-dark-2); font-size: .9375rem; }
@@ -1152,6 +1152,7 @@ h2 { font-size: clamp(2.25rem, 4.8vw, 4.25rem); line-height: 1.02; letter-spacin
    extra padding so they never reach the contact details. They turn in opposite directions; the section clips them. */
 .contact-copy { display: grid; justify-items: center; text-align: center; }
 .contact-lead { margin-inline: auto; }
+.contact-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }   /* Start a project (the inquiry form) first, WhatsApp beside it */
 .contact-list { justify-items: center; }
 .contact-list li { justify-content: center; text-align: left; }
 .contact > .wrap { position: relative; z-index: 1; }
@@ -1353,7 +1354,7 @@ html:has(dialog[open]) { overflow: hidden; }
   .header-bar { height: 56px; gap: 12px; }
   .header-actions .btn { display: none; }
   .brand em { display: none; }
-  .hero-actions .btn { flex: 1 1 100%; }
+  .hero-actions .btn, .contact-actions .btn { flex: 1 1 100%; }
   .rotator { display: block; }
   .pillars, .service-grid { grid-template-columns: 1fr; }
   .card-i { margin-bottom: 24px; }
@@ -1493,3 +1494,6 @@ html:has(dialog[open]) { overflow: hidden; }
   .inquiry .field-row { grid-template-columns: 1fr; }
   .start-back { font-size: .875rem; }
 }
+/* Sparkles on the flow lines (js/site.js): same box and stacking as .flow-lines, but at full strength. */
+.flow-sparks { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; overflow: visible; }
+.flow-sparks path { stroke: none; }

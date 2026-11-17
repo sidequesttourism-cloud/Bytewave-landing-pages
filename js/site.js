@@ -459,6 +459,36 @@
       }
       return d;
     };
+    // The same curve as a dense polyline with running lengths, so points along it can be looked up in JS.
+    // (SVG getPointAtLength is very slow in Chrome on Android - it re-walks the whole path on every call - and
+    // using it for the drawing pace and the sparkles held the page loader for seconds on Android phones.)
+    const curveGeo = (pts, per = 6) => {
+      const xs = [pts[0][0]]; const ys = [pts[0][1]];
+      for (let i = 0; i < pts.length - 1; i += 1) {
+        const p0 = pts[i - 1] || pts[i]; const p1 = pts[i]; const p2 = pts[i + 1]; const p3 = pts[i + 2] || p2;
+        const c1x = p1[0] + (p2[0] - p0[0]) / 6; const c1y = p1[1] + (p2[1] - p0[1]) / 6;
+        const c2x = p2[0] - (p3[0] - p1[0]) / 6; const c2y = p2[1] - (p3[1] - p1[1]) / 6;
+        for (let k = 1; k <= per; k += 1) {
+          const t = k / per; const u = 1 - t;
+          const a = u * u * u; const b = 3 * u * u * t; const c = 3 * u * t * t; const e = t * t * t;
+          xs.push(a * p1[0] + b * c1x + c * c2x + e * p2[0]);
+          ys.push(a * p1[1] + b * c1y + c * c2y + e * p2[1]);
+        }
+      }
+      const cum = new Float64Array(xs.length);
+      for (let i = 1; i < xs.length; i += 1) cum[i] = cum[i - 1] + Math.hypot(xs[i] - xs[i - 1], ys[i] - ys[i - 1]);
+      return { xs, ys, cum, total: cum[cum.length - 1] };
+    };
+    const pointAt = (g, len) => {
+      const { xs, ys, cum } = g;
+      if (len <= 0) return { x: xs[0], y: ys[0] };
+      const n = cum.length - 1;
+      if (len >= cum[n]) return { x: xs[n], y: ys[n] };
+      let lo = 0; let hi = n;
+      while (hi - lo > 1) { const mid = (lo + hi) >> 1; if (cum[mid] < len) lo = mid; else hi = mid; }
+      const f = (len - cum[lo]) / ((cum[hi] - cum[lo]) || 1);
+      return { x: xs[lo] + (xs[hi] - xs[lo]) * f, y: ys[lo] + (ys[hi] - ys[lo]) * f };
+    };
     // Each line: a long, unhurried arc in from one side near the top and out the far side near the bottom, with
     // one large, generous loop about a third of the way along and a couple of broad, slow waves further down -
     // clean and geometric, not hand-drawn. The loop is a perfect oval that touches the line and closes exactly
@@ -524,35 +554,145 @@
       svg.setAttribute('class', 'flow-lines');
       svg.setAttribute('aria-hidden', 'true');
       svg.setAttribute('focusable', 'false');
+      // Knockout mask: the lines fade out where they pass under a block of text and reappear beyond it, as if
+      // they slip behind the page. White shows the line; each text block is a stack of soft-edged dark rectangles.
+      const mask = document.createElementNS(NS, 'mask');
+      mask.id = `fl-mask-${k}`;
+      mask.setAttribute('maskUnits', 'userSpaceOnUse');
+      const holes = document.createElementNS(NS, 'g');
+      const field = document.createElementNS(NS, 'rect');
+      field.setAttribute('fill', '#fff');
+      mask.append(field, holes);
+      const defs = document.createElementNS(NS, 'defs');
+      defs.append(mask);
+      const g = document.createElementNS(NS, 'g');
+      g.setAttribute('mask', `url(#${mask.id})`);
+      svg.append(defs, g);
       const paths = ['fl-1', 'fl-2'].map((cls) => {
         const path = document.createElementNS(NS, 'path');
         path.setAttribute('class', cls);
         path.setAttribute('pathLength', '1');
-        svg.append(path);
+        g.append(path);
         return path;
       });
-      sec.prepend(svg);
-      return { sec, svg, paths, flip: k % 2 === 1, seed: k + 1, H: 1, samples: [], y: { v: 0 } };
+      // Sparkles ride in a second, fully opaque layer that shares the same knockout mask, so they also slip
+      // behind text. Filled by the sparkle code further down; empty with reduced motion.
+      const sparkSvg = document.createElementNS(NS, 'svg');
+      sparkSvg.setAttribute('class', 'flow-sparks');
+      sparkSvg.setAttribute('aria-hidden', 'true');
+      sparkSvg.setAttribute('focusable', 'false');
+      const sparks = document.createElementNS(NS, 'g');
+      sparks.setAttribute('mask', `url(#${mask.id})`);
+      sparkSvg.append(sparks);
+      sec.prepend(svg, sparkSvg);
+      return {
+        sec, svg, sparkSvg, sparks, paths, field, holes, flip: k % 2 === 1, seed: k + 1, H: 1, samples: [], y: { v: 0 },
+        totals: [0, 0], share: [0, 0], head: [0, 0], lastTip: [null, null], heads: [], glints: [], visible: false,
+      };
     });
+    // Text blocks the lines pass behind (cards have their own solid backgrounds, so they need no hole).
+    const TEXT = ':is(.section-head, .process-head, .statement, .faq-grid > div:first-child, .faq-list)';
+    // Feathered edge: three nested rounded rectangles, the outer ones partly transparent, so the line thins out
+    // over ~40px before it disappears instead of stopping at a hard edge.
+    const FEATHER = [[44, 0.3], [24, 0.45], [8, 1]];
+    const cutHoles = (it, W, H) => {
+      it.field.setAttribute('width', W); it.field.setAttribute('height', H);
+      const box = it.sec.getBoundingClientRect();
+      // Holes hug the words themselves (each rendered line of text), not the whole box around them, so a line
+      // swinging through the empty space beside a heading stays visible.
+      const range = document.createRange();
+      const textRects = (el) => {
+        const out = [];
+        const walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, { acceptNode: (n) => (n.data.trim() ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT) });
+        const seen = new Set();
+        for (let n = walk.nextNode(); n; n = walk.nextNode()) {
+          if (n.parentElement.closest('.sr-only, [hidden]')) continue;
+          // Answers inside a closed question are not on screen; only the question line counts.
+          const det = n.parentElement.closest('details');
+          if (det && !det.open && !n.parentElement.closest('summary')) continue;
+          // Measure where the words will rest, not where an entrance animation has them right now: split
+          // headings slide each word up inside a clipped .w box (measure the box), and .reveal blocks start
+          // a little lower (take their current offset back out).
+          const w = n.parentElement.closest('.split .w');
+          if (w) {
+            if (seen.has(w)) continue;
+            seen.add(w);
+            const r = w.getBoundingClientRect();
+            out.push({ left: r.left, right: r.right, top: r.top, bottom: r.bottom });
+            continue;
+          }
+          let dy = 0;
+          for (let a = n.parentElement; a && a !== el.parentElement; a = a.parentElement) {
+            if (a.classList.contains('reveal')) dy += parseFloat((getComputedStyle(a).translate || '').split(' ')[1]) || 0;
+          }
+          range.selectNodeContents(n);
+          [...range.getClientRects()].forEach((r) => { if (r.width && r.height) out.push({ left: r.left, right: r.right, top: r.top - dy, bottom: r.bottom - dy }); });
+        }
+        return out;
+      };
+      const blocks = [...it.sec.querySelectorAll(TEXT)].flatMap((el) => {
+        const rs = textRects(el);
+        if (!rs.length) return [];
+        // A sticky block slides down its parent while scrolling, so clear the whole stretch it can travel.
+        if (getComputedStyle(el).position === 'sticky') {
+          const p = el.parentElement.getBoundingClientRect();
+          return [{
+            left: Math.min(...rs.map((r) => r.left)), right: Math.max(...rs.map((r) => r.right)),
+            top: Math.min(p.top, ...rs.map((r) => r.top)), bottom: p.bottom,
+          }];
+        }
+        return rs;
+      }).sort((a, b) => a.top - b.top);
+      // Blocks stacked close together (a heading over its paragraph) become one hole, so no sliver of line
+      // shows in the gap between them.
+      // Rects from side-by-side columns interleave once sorted, so each one joins whichever hole it touches.
+      const near = (a, b) => b.top - a.bottom < FEATHER[0][0] * 2 && a.top - b.bottom < FEATHER[0][0] * 2
+        && b.left < a.right + 40 && b.right > a.left - 40;
+      const merged = [];
+      blocks.forEach((r) => {
+        const m = merged.find((x) => near(x, r));
+        if (m) {
+          m.left = Math.min(m.left, r.left); m.right = Math.max(m.right, r.right);
+          m.top = Math.min(m.top, r.top); m.bottom = Math.max(m.bottom, r.bottom);
+        } else merged.push({ ...r });
+      });
+      it.holes.replaceChildren(...merged.map((m) => ({ left: m.left, top: m.top, width: m.right - m.left, height: m.bottom - m.top })).flatMap((r) => {
+        return FEATHER.map(([pad, op]) => {
+          const rect = document.createElementNS(NS, 'rect');
+          rect.setAttribute('x', (r.left - box.left - pad).toFixed(1));
+          rect.setAttribute('y', (r.top - box.top - pad).toFixed(1));
+          rect.setAttribute('width', (r.width + pad * 2).toFixed(1));
+          rect.setAttribute('height', (r.height + pad * 2).toFixed(1));
+          rect.setAttribute('rx', pad + 12);
+          rect.setAttribute('fill', '#000');
+          rect.setAttribute('fill-opacity', op);
+          return rect;
+        });
+      }));
+    };
     const shape = () => items.forEach((it) => {
       const { sec, svg, paths, flip, seed } = it;
       const W = sec.offsetWidth;
       const H = sec.offsetHeight;
       it.H = H;
       svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+      it.sparkSvg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+      cutHoles(it, W, H);
       const pts = linePoints(W, H, flip, seed);
-      paths[0].setAttribute('d', curve(pts));
       const gap = Math.min(30, W * 0.025);
-      paths[1].setAttribute('d', curve(pts.map(([x, y]) => [x, y + gap])));   // a parallel line just below
+      const lines = [pts, pts.map(([x, y]) => [x, y + gap])];   // the second is a parallel line just below
+      lines.forEach((l, i) => paths[i].setAttribute('d', curve(l)));
+      it.geo = lines.map((l) => curveGeo(l));
       // Drawing pace: a "depth" that only grows along each curve. It follows the curve's height, except where the
       // curve doubles back (the loop) - there it keeps growing slowly so the circle draws itself over a short
       // stretch of scrolling instead of all at once. Scaled so the end of the curve is the bottom of the section.
-      it.samples = paths.map((path) => {
-        const total = path.getTotalLength();
+      it.samples = it.geo.map((g, pi) => {
+        const total = g.total;
+        it.totals[pi] = total; it.lastTip[pi] = null;
         const N = 600;
         let ymax = -Infinity; let extra = 0; let prev = null;
         const raw = Array.from({ length: N + 1 }, (_, i) => {
-          const pt = path.getPointAtLength((total * i) / N);
+          const pt = pointAt(g, (total * i) / N);
           if (prev) {
             const seg = Math.hypot(pt.x - prev.x, pt.y - prev.y);
             if (pt.y <= ymax) extra += seg * 0.6;      // doubling back: still move on, at an unhurried pace
@@ -573,8 +713,134 @@
       while (hi - lo > 1) { const mid = (lo + hi) >> 1; if (sm[mid].y < y) lo = mid; else hi = mid; }
       return sm[lo].f + ((sm[hi].f - sm[lo].f) * (y - sm[lo].y)) / ((sm[hi].y - sm[lo].y) || 1);
     };
-    const paint = (it) => it.paths.forEach((path, i) => { path.style.strokeDashoffset = `${1 - shareAt(it.samples[i], it.y.v * it.H)}`; });
+    /* Sparkles on the flow lines: the drawing tip of each line carries a bright, pulsing star with a soft halo,
+       sheds small twinkling glints behind it as it draws, and the finished part of the line catches the odd
+       glint now and then while the section is on screen. Mint line: mint and white glints; marigold line:
+       marigold and white. The frame loop only runs while a section with lines is visible or glints remain. */
+    const STAR = 'M0 -1Q0 0 1 0Q0 0 0 1Q0 0 -1 0Q0 0 0 -1Z';
+    // Dark sections get light glints; on the cream sections white would vanish, so they use deeper tones.
+    const SPARK_DARK = [['#5ccfa6', '#5ccfa6', '#bff3df', '#ffffff'], ['#e8a83c', '#e8a83c', '#ffd98a', '#ffffff']];
+    const SPARK_LIGHT = [['#2fb487', '#1f9b72', '#5ccfa6'], ['#e39a1f', '#d4880f', '#e8a83c']];
+    const isDark = (it) => it.sec.matches('.process');
+    const MAX_GLINTS = 70;
+    let sparkRaf = 0; let sparkPrev = 0;
+    const makeStar = (color, haloOpacity) => {
+      const g = document.createElementNS(NS, 'g');
+      const halo = document.createElementNS(NS, 'circle');
+      halo.setAttribute('r', '3.2'); halo.setAttribute('fill', `url(#fs-glow-${color.slice(1)})`); halo.setAttribute('opacity', haloOpacity * 2.2);
+      halo.setAttribute('class', 'fs-halo');
+      const star = document.createElementNS(NS, 'path');
+      star.setAttribute('d', STAR); star.setAttribute('fill', color);
+      g.append(halo, star);
+      return g;
+    };
+    const tipAt = (it, i, share) => pointAt(it.geo[i], it.totals[i] * share);
+    const spawnGlint = (it, i, x, y, big = false) => {
+      if (it.glints.length >= MAX_GLINTS) it.glints.shift().el.remove();
+      const cols = (isDark(it) ? SPARK_DARK : SPARK_LIGHT)[i];
+      const el = makeStar(cols[(Math.random() * cols.length) | 0], 0.35);
+      it.sparks.append(el);
+      const a = Math.random() * Math.PI * 2; const sp = 6 + Math.random() * 18;
+      it.glints.push({
+        el, x: x + (Math.random() - 0.5) * 12, y: y + (Math.random() - 0.5) * 12,
+        vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, r: (big ? 9 : 5) + Math.random() * (big ? 8 : 7),
+        rot: Math.random() * Math.PI, spin: (Math.random() - 0.5) * 2.4,
+        tw: 5 + Math.random() * 7, ph: Math.random() * Math.PI * 2, life: 0, max: 0.8 + Math.random() * 0.9,
+      });
+    };
+    const sparkFrame = (t) => {
+      const dt = Math.min(0.05, (t - (sparkPrev || t)) / 1000); sparkPrev = t;
+      let alive = false;
+      items.forEach((it) => {
+        // The finished part of each line catches an occasional glint while the section is on screen.
+        if (it.visible) {
+          alive = true;
+          it.paths.forEach((_, i) => {
+            if (it.share[i] > 0.02 && Math.random() < dt * 4) {
+              const p = tipAt(it, i, Math.random() * it.share[i]);
+              spawnGlint(it, i, p.x, p.y);
+            }
+          });
+          // Tip stars pulse while their line is part-drawn.
+          it.heads.forEach((h, i) => {
+            const s = it.head[i];
+            if (s <= 0.002 || it.share[i] >= 0.998) { h.style.opacity = '0'; return; }
+            const p = tipAt(it, i, s);
+            const pulse = 0.75 + 0.25 * Math.sin(t / 140 + i * 1.7);
+            h.setAttribute('transform', `translate(${p.x.toFixed(1)} ${p.y.toFixed(1)}) rotate(${((t / 18) % 360).toFixed(1)}) scale(${(16 * pulse).toFixed(2)})`);
+            h.style.opacity = '1';
+          });
+        }
+        for (let k = it.glints.length - 1; k >= 0; k -= 1) {
+          const gl = it.glints[k];
+          gl.life += dt;
+          if (gl.life >= gl.max) { gl.el.remove(); it.glints.splice(k, 1); continue; }
+          gl.vx *= 0.95; gl.vy = gl.vy * 0.95 + 14 * dt;
+          gl.x += gl.vx * dt; gl.y += gl.vy * dt; gl.rot += gl.spin * dt;
+          const u = gl.life / gl.max;
+          const fade = u < 0.15 ? u / 0.15 : 1 - (u - 0.15) / 0.85;
+          const twinkle = 0.55 + 0.45 * Math.sin(gl.ph + gl.life * gl.tw);
+          gl.el.setAttribute('transform', `translate(${gl.x.toFixed(1)} ${gl.y.toFixed(1)}) rotate(${(gl.rot * 57.3).toFixed(1)}) scale(${(gl.r * (0.6 + 0.6 * twinkle)).toFixed(2)})`);
+          gl.el.style.opacity = (Math.max(0, fade) * (0.55 + 0.45 * twinkle)).toFixed(3);
+          alive = true;
+        }
+      });
+      if (alive) sparkRaf = requestAnimationFrame(sparkFrame);
+      else { sparkRaf = 0; sparkPrev = 0; }
+    };
+    const wakeSparks = () => { if (!sparkRaf) sparkRaf = requestAnimationFrame(sparkFrame); };
+    // As a tip moves along its line, it sheds a glint every ~16px of travel.
+    // The sparkles lead: the head star runs LEAD px ahead of the drawn line, and the gap between them is filled
+    // with glints, so the front of each line is all sparkle and the solid stroke follows on behind. Progress is
+    // stretched so head and line both reach the end of the curve together.
+    const LEAD = 120;
+    const shed = (it, i, line, head) => {
+      it.share[i] = line; it.head[i] = head;
+      if (!animate || head <= 0.002 || line >= 0.998) { it.lastTip[i] = null; return; }
+      const p = tipAt(it, i, head);
+      const prev = it.lastTip[i];
+      if (!prev) { it.lastTip[i] = { x: p.x, y: p.y, carry: 0 }; return; }
+      prev.carry += Math.hypot(p.x - prev.x, p.y - prev.y);
+      while (prev.carry >= 7) {
+        prev.carry -= 7;
+        const q = Math.random() < 0.45 ? p : tipAt(it, i, line + (head - line) * Math.random());
+        spawnGlint(it, i, q.x, q.y, Math.random() < 0.2);
+      }
+      prev.x = p.x; prev.y = p.y;
+      wakeSparks();
+    };
+    const paint = (it) => it.paths.forEach((path, i) => {
+      const s = shareAt(it.samples[i], it.y.v * it.H);
+      const lead = animate ? Math.min(0.5, LEAD / (it.totals[i] || 1)) : 0;
+      const head = Math.min(1, s * (1 + lead));
+      const line = Math.max(0, s * (1 + lead) - lead);
+      path.style.strokeDashoffset = `${1 - line}`;
+      shed(it, i, line, head);
+    });
     shape();
+    if (animate) {
+      // One soft radial glow per sparkle colour, shared by every halo on the page.
+      const glowDefs = document.createElementNS(NS, 'defs');
+      const allColors = [...new Set([...SPARK_DARK, ...SPARK_LIGHT].flat().concat(['#ffe2a6', '#d9fbee']))];
+      glowDefs.innerHTML = allColors.map((c) => `<radialGradient id="fs-glow-${c.slice(1)}"><stop offset="0" stop-color="${c}" stop-opacity=".9"/><stop offset=".35" stop-color="${c}" stop-opacity=".35"/><stop offset="1" stop-color="${c}" stop-opacity="0"/></radialGradient>`).join('');
+      items[0].sparkSvg.prepend(glowDefs);
+      items.forEach((it) => {
+        it.heads = [0, 1].map((i) => {
+          const h = makeStar(isDark(it) ? (i ? '#ffe2a6' : '#d9fbee') : (i ? '#e39a1f' : '#2fb487'), 0.45);
+          h.style.opacity = '0';
+          it.sparks.append(h);
+          return h;
+        });
+      });
+      const sparkIO = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          const it = items.find((x) => x.sec === e.target);
+          if (it) it.visible = e.isIntersecting;
+        });
+        wakeSparks();
+      });
+      items.forEach((it) => sparkIO.observe(it.sec));
+    }
     if (animate) {
       items.forEach((it) => {
         it.paths.forEach((path) => { path.style.strokeDashoffset = '1'; });
@@ -588,6 +854,12 @@
         });
       });
       fST.addEventListener('refreshInit', shape);
+      // Opening or closing a question changes the text and the section height: redraw once it has settled.
+      let toggleTimer = 0;
+      document.addEventListener('toggle', (e) => {
+        if (!items.some((it) => it.sec.contains(e.target))) return;
+        clearTimeout(toggleTimer); toggleTimer = setTimeout(() => fST.refresh(), 450);
+      }, true);
       fST.addEventListener('refresh', () => items.forEach(paint));
     } else {
       let flowTimer = 0;
