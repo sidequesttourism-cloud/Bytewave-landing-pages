@@ -1498,6 +1498,19 @@ html:has(dialog[open]) { overflow: hidden; }
   .start-grid { grid-template-columns: 1fr; }
   .start-intro { position: static; }
   .start-next { max-width: none; }
+  /* Phones and tablets: the intro fills the whole width and there is no empty space for the line to run through,
+     so it would always cross the words. Leave it out here (the star field and glow stay), and give the intro text
+     a soft navy halo so every letter stays crisp over the background. */
+  .start-line { display: none; }
+  .start-intro :is(.label, .start-title, .start-lead, .start-next h2, .start-next p, .start-alt) {
+    text-shadow: 0 0 3px var(--navy-deep), 0 0 10px var(--navy-deep);
+  }
+  /* A live blur behind a form this tall is heavy to repaint on a phone and makes scrolling stutter. A slightly
+     more solid panel reads the same and scrolls smoothly. */
+  .inquiry {
+    -webkit-backdrop-filter: none; backdrop-filter: none;
+    background: linear-gradient(160deg, color-mix(in srgb, rgb(247 245 241) 7%, var(--navy-deep)), color-mix(in srgb, rgb(247 245 241) 3%, var(--navy-deep)) 55%);
+  }
 }
 @media (max-width: 560px) {
   .inquiry .field-row { grid-template-columns: 1fr; }
