@@ -117,7 +117,35 @@
      Note: the page uses CSS zoom on laptops (see the <head> script), which scales the pixel values ScrollTrigger's
      pin writes, so a pinned section lands in the wrong place there. Hold sections in place by hand instead. */
   const { gsap, ScrollTrigger } = window;
-  if (gsap && ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
+  if (gsap && ScrollTrigger) {
+    gsap.registerPlugin(ScrollTrigger);
+    // Phones: the address bar sliding in and out resizes the window on every scroll turn-around. Don't re-lay-out
+    // every trigger for that (it makes the page jump); real width changes still refresh as normal.
+    ScrollTrigger.config({ ignoreMobileResize: true });
+  }
+
+  /* Scroll-direction speed for looping tweens (hero marquee, Contact rings): they run forwards while scrolling
+     down, backwards while scrolling up, get a short boost from a fast scroll and ease back to their resting pace.
+     Touch scrolling fires many updates a second, so new speed tweens start only on a turn-around or every ~90ms,
+     which keeps phones from piling up tweens and stuttering. */
+  const followScroll = (loops, maxBoost, perBoost, settle) => {
+    let dir = 1; let last = 0;
+    ScrollTrigger.create({
+      start: 0,
+      end: 'max',
+      onUpdate: (self) => {
+        const now = performance.now();
+        const turned = self.direction !== dir;
+        if (!turned && now - last < 90) return;
+        dir = self.direction; last = now;
+        const boost = Math.min(maxBoost, 1 + Math.abs(self.getVelocity()) / perBoost);
+        loops.forEach((t) => {
+          gsap.to(t, { timeScale: dir * boost, duration: 0.25, overwrite: true });
+          gsap.to(t, { timeScale: dir, duration: settle, delay: 0.3, ease: 'power2.out' });
+        });
+      },
+    });
+  };
 
   /* Hero logo marquee: loops left while you scroll down (and at rest), right while you scroll up. A fast scroll
      speeds it up briefly, then it eases back to its normal pace. */
@@ -127,17 +155,7 @@
     const SPEED = 26;   // seconds for one full set at normal pace
     const loop = gsap.fromTo(mqTrack, { xPercent: 0 }, { xPercent: -50, duration: SPEED, ease: 'none', repeat: -1 });
     loop.totalTime(SPEED * 1000);   // start far into the repeats so it can also run backwards for a long time
-    let dir = 1;
-    ScrollTrigger.create({
-      start: 0,
-      end: 'max',
-      onUpdate: (self) => {
-        if (self.direction !== dir) dir = self.direction;
-        const boost = Math.min(4, 1 + Math.abs(self.getVelocity()) / 800);
-        gsap.to(loop, { timeScale: dir * boost, duration: 0.25, overwrite: true });
-        gsap.to(loop, { timeScale: dir, duration: 1.2, delay: 0.3, ease: 'power2.out' });
-      },
-    });
+    followScroll([loop], 4, 800, 1.2);
   }
 
   /* Contact rings: the same scroll-direction marquee, bent into a wheel. At rest the left ring turns clockwise
@@ -154,19 +172,7 @@
       t.totalTime(TURN * 1000);     // far into the repeats, so it can also run backwards for a long time
       return t;
     });
-    let ringDir = 1;
-    ScrollTrigger.create({
-      start: 0,
-      end: 'max',
-      onUpdate: (self) => {
-        if (self.direction !== ringDir) ringDir = self.direction;
-        const boost = Math.min(5, 1 + Math.abs(self.getVelocity()) / 600);
-        loops.forEach((t) => {
-          gsap.to(t, { timeScale: ringDir * boost, duration: 0.25, overwrite: true });
-          gsap.to(t, { timeScale: ringDir, duration: 1.4, delay: 0.3, ease: 'power2.out' });
-        });
-      },
-    });
+    followScroll(loops, 5, 600, 1.4);
   }
 
   /* ---------- Header: solid once scrolled, slides away as soon as you scroll down ----------
@@ -458,7 +464,14 @@
       stackDeck.style.setProperty('--deck-top', `${Math.round(innerHeight / z - stackDeck.offsetHeight)}px`);
     };
     placeDeck();
-    addEventListener('resize', placeDeck);
+    // On touch screens the address bar changes the window height on every scroll turn-around; re-placing the
+    // deck for that makes it hop. Follow width changes (rotation) and big height changes only.
+    let deckW = innerWidth; let deckH = innerHeight;
+    addEventListener('resize', () => {
+      if (!finePointer && innerWidth === deckW && Math.abs(innerHeight - deckH) < 150) return;
+      deckW = innerWidth; deckH = innerHeight;
+      placeDeck();
+    });
     new ResizeObserver(placeDeck).observe(stackDeck);
   }
 
@@ -623,8 +636,12 @@
     const TEXT = ':is(.section-head, .process-head, .statement, .faq-grid > div:first-child, .faq-list)';
     // Feathered edge: three nested rounded rectangles, the outer ones partly transparent, so the line thins out
     // over ~40px before it disappears instead of stopping at a hard edge.
-    const FEATHER = [[44, 0.3], [24, 0.45], [8, 1]];
+    const FEATHER_WIDE = [[44, 0.3], [24, 0.45], [8, 1]];
+    const FEATHER_NARROW = [[64, 0.3], [40, 0.5], [20, 1]];   // phones: the line fades out further from the words
+    const narrow = () => innerWidth <= 860;
+    let FEATHER = FEATHER_WIDE;
     const cutHoles = (it, W, H) => {
+      FEATHER = narrow() ? FEATHER_NARROW : FEATHER_WIDE;
       it.field.setAttribute('width', W); it.field.setAttribute('height', H);
       const box = it.sec.getBoundingClientRect();
       // Holes hug the words themselves (each rendered line of text), not the whole box around them, so a line
@@ -662,6 +679,15 @@
       const blocks = [...it.sec.querySelectorAll(TEXT)].flatMap((el) => {
         const rs = textRects(el);
         if (!rs.length) return [];
+        // Phones: the text fills the column, so a per-word hole would let the line slip between text lines and
+        // brush past short ones. Cut one solid hole across the whole column for the block instead.
+        if (narrow()) {
+          const eb = el.getBoundingClientRect();
+          rs.splice(0, rs.length, {
+            left: Math.min(eb.left, ...rs.map((r) => r.left)), right: Math.max(eb.right, ...rs.map((r) => r.right)),
+            top: Math.min(...rs.map((r) => r.top)), bottom: Math.max(...rs.map((r) => r.bottom)),
+          });
+        }
         // A sticky block slides down its parent while scrolling, so clear the whole stretch it can travel.
         if (getComputedStyle(el).position === 'sticky') {
           const p = el.parentElement.getBoundingClientRect();
@@ -892,9 +918,34 @@
         clearTimeout(toggleTimer); toggleTimer = setTimeout(() => fST.refresh(), 450);
       }, true);
       fST.addEventListener('refresh', () => items.forEach(paint));
+      // Late images, web fonts or anything else that changes a section's height would leave the curves and
+      // the cut-outs behind the text out of step with the words (most noticeable on phones, where images load
+      // late). Re-measure whenever a section's size really changes, and once fonts and the page have loaded.
+      let reTimer = 0;
+      const reMeasure = () => { clearTimeout(reTimer); reTimer = setTimeout(() => fST.refresh(), 250); };
+      const lastSize = new Map();
+      const ro = new ResizeObserver((entries) => {
+        let changed = false;
+        entries.forEach((e) => {
+          const w = Math.round(e.contentRect.width); const h = Math.round(e.contentRect.height);
+          const prev = lastSize.get(e.target);
+          if (prev && (Math.abs(prev.w - w) > 1 || Math.abs(prev.h - h) > 8)) changed = true;
+          lastSize.set(e.target, { w, h });
+        });
+        if (changed) reMeasure();
+      });
+      items.forEach((it) => ro.observe(it.sec));
+      document.fonts?.ready.then(reMeasure);
+      if (document.readyState === 'complete') reMeasure(); else addEventListener('load', reMeasure, { once: true });
     } else {
       let flowTimer = 0;
-      addEventListener('resize', () => { clearTimeout(flowTimer); flowTimer = setTimeout(shape, 200); });
+      // Width changes only: a phone's address bar sliding in and out changes the height, not the layout.
+      let flowW = innerWidth;
+      addEventListener('resize', () => {
+        if (innerWidth === flowW) return;
+        flowW = innerWidth;
+        clearTimeout(flowTimer); flowTimer = setTimeout(shape, 200);
+      });
     }
   }
 
