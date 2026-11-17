@@ -1,5 +1,5 @@
 /* Project inquiry form on the Start a project page (works for any [data-inquiry] form).
-   Fields: name, contact number, organisation (optional), the services needed (several can be picked), a
+   Fields: name, contact number, email, organisation (optional), the services needed (several can be picked), a
    description of the idea, an estimated budget, and a tick to confirm that pricing is agreed after a discussion.
    It checks itself here, then posts to Web3Forms. On success the form is swapped for its thank-you panel
    (the [data-inquiry-done] element next to it). */
@@ -47,6 +47,9 @@
           return (/^\+?[\d\s()-]+$/.test(v) && digits.length >= 7 && digits.length <= 15) || 'Please enter a contact number we can reach you on.';
         },
       },
+      // Email: Web3Forms uses a field named "email" as the reply-to address, so replying to the inquiry
+      // in the inbox goes straight back to the client.
+      { el: form.elements.email, test: (el) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(el.value.trim()) || 'Please enter an email address we can reply to.' },
       { el: servicesBox, group: true, test: () => picked('svc').length > 0 || 'Please choose at least one service, or "Not sure yet".' },
       { el: idea, test: (el) => el.value.trim().length >= MIN || 'A sentence or two helps, at least 20 characters.' },
       { el: budgetBox, group: true, test: () => picked('budget').length > 0 || 'Please choose an estimated budget, or "Not sure yet".' },

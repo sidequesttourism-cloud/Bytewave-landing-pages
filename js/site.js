@@ -140,6 +140,35 @@
     });
   }
 
+  /* Contact rings: the same scroll-direction marquee, bent into a wheel. At rest the left ring turns clockwise
+     and the right ring the other way; scrolling down speeds them up in those directions, scrolling up reverses
+     both, and a fast scroll gives a short burst before they ease back to their resting pace. (The plain CSS
+     spin in site.css stays as the fallback when GSAP isn't available.) */
+  const ringSpins = $$('.contact-ring .cr-spin');
+  if (ringSpins.length && gsap && ScrollTrigger && !reduced) {
+    const TURN = 60;    // seconds per full turn at resting pace
+    const loops = ringSpins.map((svg) => {
+      svg.classList.add('is-gsap');
+      const reverse = svg.closest('.contact-ring-r');
+      const t = gsap.fromTo(svg, { rotation: 0 }, { rotation: reverse ? -360 : 360, duration: TURN, ease: 'none', repeat: -1, transformOrigin: '50% 50%' });
+      t.totalTime(TURN * 1000);     // far into the repeats, so it can also run backwards for a long time
+      return t;
+    });
+    let ringDir = 1;
+    ScrollTrigger.create({
+      start: 0,
+      end: 'max',
+      onUpdate: (self) => {
+        if (self.direction !== ringDir) ringDir = self.direction;
+        const boost = Math.min(5, 1 + Math.abs(self.getVelocity()) / 600);
+        loops.forEach((t) => {
+          gsap.to(t, { timeScale: ringDir * boost, duration: 0.25, overwrite: true });
+          gsap.to(t, { timeScale: ringDir, duration: 1.4, delay: 0.3, ease: 'power2.out' });
+        });
+      },
+    });
+  }
+
   /* ---------- Header: solid once scrolled, slides away as soon as you scroll down ----------
      Hides on any downward scroll past the first 120px. Comes back only after a deliberate scroll up
      (24px in total), so trackpad wobble and momentum don't keep pulling it back over the content. */
@@ -717,6 +746,8 @@
        sheds small twinkling glints behind it as it draws, and the finished part of the line catches the odd
        glint now and then while the section is on screen. Mint line: mint and white glints; marigold line:
        marigold and white. The frame loop only runs while a section with lines is visible or glints remain. */
+    // Sparkles are switched off: the lines draw as plain strokes. Set to true to bring the stars and glints back.
+    const SPARKLES = false;
     const STAR = 'M0 -1Q0 0 1 0Q0 0 0 1Q0 0 -1 0Q0 0 0 -1Z';
     // Dark sections get light glints; on the cream sections white would vanish, so they use deeper tones.
     const SPARK_DARK = [['#5ccfa6', '#5ccfa6', '#bff3df', '#ffffff'], ['#e8a83c', '#e8a83c', '#ffd98a', '#ffffff']];
@@ -811,14 +842,14 @@
     };
     const paint = (it) => it.paths.forEach((path, i) => {
       const s = shareAt(it.samples[i], it.y.v * it.H);
-      const lead = animate ? Math.min(0.5, LEAD / (it.totals[i] || 1)) : 0;
+      const lead = animate && SPARKLES ? Math.min(0.5, LEAD / (it.totals[i] || 1)) : 0;
       const head = Math.min(1, s * (1 + lead));
       const line = Math.max(0, s * (1 + lead) - lead);
       path.style.strokeDashoffset = `${1 - line}`;
-      shed(it, i, line, head);
+      if (SPARKLES) shed(it, i, line, head);
     });
     shape();
-    if (animate) {
+    if (animate && SPARKLES) {
       // One soft radial glow per sparkle colour, shared by every halo on the page.
       const glowDefs = document.createElementNS(NS, 'defs');
       const allColors = [...new Set([...SPARK_DARK, ...SPARK_LIGHT].flat().concat(['#ffe2a6', '#d9fbee']))];

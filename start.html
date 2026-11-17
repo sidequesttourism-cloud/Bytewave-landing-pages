@@ -15,9 +15,9 @@
   <link rel="preload" href="assets/fonts/space-grotesk-var-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="css/portal.css?v=20261117a">
   <script src="js/portal.js?v=20261117b"></script>
-  <link rel="stylesheet" href="css/site.css?v=20261117x">
+  <link rel="stylesheet" href="css/site.css?v=20261118a">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt" crossorigin="anonymous" defer></script>
-  <script src="js/inquiry.js?v=20261117a" defer></script>
+  <script src="js/inquiry.js?v=20261117b" defer></script>
   <script src="js/start.js?v=20261117c" defer></script>
   <script src="js/flowmap.js?v=20261117d" defer></script>
   <script src="js/rgb-fluid.js?v=20261117g" defer></script>
@@ -73,7 +73,7 @@
         <h1 class="start-title"><span class="st-line">Tell us what</span> <span class="st-line">you have <em>in mind.</em></span></h1>
         <p class="start-lead">A few details are all we need to understand your idea. We read every inquiry ourselves and reply within two working days to talk it through with you.</p>
         <ul class="start-next">
-          <li><span class="sn-ic"><svg class="i" aria-hidden="true"><use href="#i-message-circle"/></svg></span><div><h2>We get in touch</h2><p>We call or message you on the number you give us.</p></div></li>
+          <li><span class="sn-ic"><svg class="i" aria-hidden="true"><use href="#i-message-circle"/></svg></span><div><h2>We get in touch</h2><p>We call, message or email you, whichever suits you.</p></div></li>
           <li><span class="sn-ic"><svg class="i" aria-hidden="true"><use href="#i-handshake"/></svg></span><div><h2>We talk it through</h2><p>We learn what you need and suggest the right approach, plainly.</p></div></li>
           <li><span class="sn-ic"><svg class="i" aria-hidden="true"><use href="#i-badge-check"/></svg></span><div><h2>We agree on a plan</h2><p>Scope, timeline and price are set together, and only once you are happy with them.</p></div></li>
         </ul>
@@ -98,7 +98,10 @@
             <div class="field"><input id="q-name" name="name" type="text" autocomplete="name" required maxlength="100" placeholder=" "><label for="q-name">Your name</label></div>
             <div class="field"><input id="q-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required maxlength="24" placeholder=" "><label for="q-phone">Contact number</label></div>
           </div>
-          <div class="field"><input id="q-org" name="organisation" type="text" autocomplete="organization" maxlength="120" placeholder=" "><label for="q-org">Organisation (optional)</label></div>
+          <div class="field-row">
+            <div class="field"><input id="q-email" name="email" type="email" autocomplete="email" inputmode="email" required maxlength="160" placeholder=" "><label for="q-email">Email</label></div>
+            <div class="field"><input id="q-org" name="organisation" type="text" autocomplete="organization" maxlength="120" placeholder=" "><label for="q-org">Organisation (optional)</label></div>
+          </div>
 
           <fieldset class="pick pick-multi" id="q-services" data-group="services">
             <legend>What do you need? <span>Choose all that apply</span></legend>
@@ -153,7 +156,7 @@
         <div class="inquiry-done" hidden data-inquiry-done tabindex="-1">
           <span class="done-ic"><svg class="i" aria-hidden="true"><use href="#i-badge-check"/></svg></span>
           <h2>Thank you. Your inquiry is in.</h2>
-          <p>We will read it and get back to you on the number you gave us within two working days. If anything is urgent, message us on WhatsApp.</p>
+          <p>We will read it and get back to you by phone or email within two working days. If anything is urgent, message us on WhatsApp.</p>
           <a class="btn btn-ghost" href="./"><span>Back to the website</span><svg class="i" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
         </div>
       </div>

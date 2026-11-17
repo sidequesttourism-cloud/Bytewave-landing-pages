@@ -1167,6 +1167,7 @@ h2 { font-size: clamp(2.25rem, 4.8vw, 4.25rem); line-height: 1.02; letter-spacin
 @media (prefers-reduced-motion: no-preference) {
   .contact-ring-l .cr-spin { animation: ring-spin 60s linear infinite; }
   .contact-ring-r .cr-spin { animation: ring-spin 60s linear infinite reverse; }
+  .contact-ring .cr-spin.is-gsap { animation: none; }   /* GSAP drives it instead, following the scroll direction */
 }
 @keyframes ring-spin { to { rotate: 360deg; } }
 @media (max-width: 860px) {
