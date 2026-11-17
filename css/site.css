@@ -115,6 +115,13 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .btn .i { transition: transform .35s var(--ease); }
 .btn:hover .i { transform: translateX(3px); }
 .btn:hover .i:has(use[href="#i-arrow-up-right"]) { transform: translate(2px, -2px); }
+/* "Start a project" buttons: while hovered, the arrow keeps pushing out in its direction and springing back. */
+@media (prefers-reduced-motion: no-preference) {
+  .btn-go:is(:hover, :focus-visible) .i { transform: none; animation: arrow-go .9s cubic-bezier(.45, 0, .25, 1) infinite; }
+  .btn-go:is(:hover, :focus-visible) .i:has(use[href="#i-arrow-up-right"]) { transform: none; animation-name: arrow-go-up; }
+}
+@keyframes arrow-go { 0%, 100% { translate: 0 0; } 50% { translate: 7px 0; } }
+@keyframes arrow-go-up { 0%, 100% { translate: 0 0; } 50% { translate: 5px -5px; } }
 .btn:active { scale: .98; }
 .btn-sm { height: 40px; padding: 0 16px; font-size: .875rem; }
 .btn-lg { height: 56px; padding: 0 26px; font-size: 1rem; }
@@ -230,7 +237,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   background: radial-gradient(600px circle at var(--gx) var(--gy), rgb(14 122 92 / .22), transparent 60%);
 }
 .hero-grid { display: flex; justify-content: center; text-align: center; }
-.hero-copy { display: flex; flex-direction: column; align-items: center; max-width: 900px; }
+.hero-copy { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 900px; min-width: 0; }
 .hero-copy .hero-visual { width: clamp(118px, 11vw, 160px); margin-bottom: clamp(22px, 3vh, 34px); }
 /* Top-down desk photo behind the whole hero. A dark centre and a navy bottom edge keep the text readable
    and blend the photo into the next section. */
@@ -244,23 +251,19 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .hero-title .line { display: block; overflow: clip; padding-bottom: .08em; }
 .hero-title .line-in { display: inline-block; }
 .rotator { position: relative; display: inline-block; color: var(--mint); }
-.rotator { perspective: 700px; }
-.rotator-word { display: inline-block; }
-/* Split-flap letters: each flip drops down from the top edge like a departure-board tile. */
-.flap { display: inline-block; transform-origin: 50% 55%; }
-.flap.is-pre { opacity: 0; }
-.flap.is-flip { animation: flap .14s cubic-bezier(.3, .8, .4, 1.25); }
-.flap:not(.is-set) { opacity: .55; }
-.flap.is-set { opacity: 1; }
-@keyframes flap { from { transform: rotateX(-95deg); } }
-/* Glitch: two tinted copies of the incoming word (red and cyan) tear in through jumping slices. */
-.rotator-word { position: relative; }
+.rotator-word { display: inline-block; white-space: nowrap; }
+/* Glitch + text decoding: the new word decodes out of random characters, left to right, while two tinted
+   copies (red and cyan) tear through jumping slices. The word's box eases from the old width to the new one,
+   so the centred line slides instead of jumping when a long word meets a short one. */
+.rotator-word { position: relative; white-space: nowrap; }
+.rotator-word.is-decoding { transition: width .75s cubic-bezier(.45, 0, .2, 1); }
+.rotator-word .dec { opacity: .55; }
 .rotator-word::before, .rotator-word::after {
   content: attr(data-text); position: absolute; left: 0; top: 0; white-space: nowrap; opacity: 0; pointer-events: none;
 }
-.rotator-word.is-glitch { animation: glitch-main .52s steps(1) both; }
-.rotator-word.is-glitch::before { opacity: 1; color: #ff4f6d; mix-blend-mode: screen; animation: glitch-a .52s steps(1) both; }
-.rotator-word.is-glitch::after { opacity: 1; color: #4fd8ff; mix-blend-mode: screen; animation: glitch-b .52s steps(1) both; }
+.rotator-word.is-glitch { animation: glitch-main .8s steps(1) both; }
+.rotator-word.is-glitch::before { opacity: 1; color: #ff4f6d; mix-blend-mode: screen; animation: glitch-a .8s steps(1) both; }
+.rotator-word.is-glitch::after { opacity: 1; color: #4fd8ff; mix-blend-mode: screen; animation: glitch-b .8s steps(1) both; }
 @keyframes glitch-main {
   0% { translate: 0 0; } 8% { translate: -3px 1px; skew: -8deg; } 16% { translate: 4px -1px; skew: 6deg; color: transparent; }
   32% { translate: -2px 0; skew: 0deg; color: transparent; } 40% { translate: 0 0; color: var(--mint); } 56% { translate: 2px 0; }
@@ -280,6 +283,23 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 }
 .hero-lead { max-width: 46ch; margin-top: 24px; font-size: clamp(1rem, 1.3vw, 1.125rem); color: var(--on-dark-2); }
 .hero-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 34px; }
+/* Icon marquee under the hero buttons: small marks of our own products, scrolling left forever. The track holds two identical sets and slides by exactly one set, so the loop has no seam. */
+.hero-marquee {
+  width: min(520px, 100%); margin-top: clamp(32px, 4vh, 44px); overflow: hidden;
+  contain: inline-size;   /* the long track must not widen the hero */
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent);
+}
+.marquee-track { display: flex; width: max-content; }
+.marquee-set { display: flex; align-items: center; gap: 110px; padding-right: 110px; }
+.mq-logo { width: 26px; height: 26px; flex: none; border-radius: 7px; }
+.mq-item { display: inline-flex; align-items: center; gap: 10px; flex: none; white-space: nowrap; font: 500 .875rem/1 var(--display); letter-spacing: -.01em; color: rgb(247 245 241 / .6); }
+/* Plain CSS loop as a fallback; when GSAP is available site.js takes over (is-gsap) and steers it by scroll. */
+@media (prefers-reduced-motion: no-preference) {
+  .marquee-track { animation: marquee 26s linear infinite; }
+  .marquee-track.is-gsap { animation: none; }
+}
+@keyframes marquee { to { translate: -50% 0; } }
 
 
 /* Tap-to-pause: the whole hero is the control; this button is the keyboard route. */
@@ -297,157 +317,52 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 }
 .motion-toast.is-on { opacity: 1; translate: -50% 0; }
 
-@media (prefers-reduced-motion: no-preference) {
-  /* The hero text falls in with the coin and stacks from the bottom up, so nothing falls through text that has
-     already landed: the buttons land with the coin (~.9s), then the paragraph, line 2 and line 1 (~1.25s). */
-  .js .hero-title .line { overflow: visible; }
-  .js [data-intro] { transform-origin: 50% 100%; animation: text-drop .95s calc((5 - var(--d)) * 110ms + 150ms) both; }
-  /* The menu bar arrives last, after everything has landed, so nothing falls through it.
-     "backwards" only: once done it hands translate back to the scroll-hide rule. */
-  .js .header-bar { animation: header-in .6s cubic-bezier(.2, .8, .3, 1) 2s backwards; }
-}
-
 /* Global pause: every looping CSS animation on the page stops. */
 [data-motion="paused"] *,
 [data-motion="paused"] *::before,
 [data-motion="paused"] *::after { animation-play-state: paused !important; }
 
-/* Hero logo as a physical coin: real edge thickness, a light sheen that follows the tilt, and a shadow
-   on the ground. It flips in once on load, sways very slowly, tilts toward the pointer and flips when clicked. */
-@property --sway { syntax: '<angle>'; inherits: true; initial-value: 0deg; }
-@property --flip { syntax: '<angle>'; inherits: true; initial-value: 0deg; }
-@property --rx { syntax: '<angle>'; inherits: true; initial-value: 0deg; }
-@property --ry { syntax: '<angle>'; inherits: true; initial-value: 0deg; }
-.hero-visual { perspective: 1100px; }
-.coin-stage { position: relative; aspect-ratio: 1; }
-.coin {
-  --rx: 0deg; --ry: 0deg; --tx: 0; --ty: 0;
-  position: absolute; inset: 0; transform-style: preserve-3d; cursor: pointer;
-  transform: rotateX(var(--rx)) rotateY(calc(var(--ry) + var(--sway) + var(--flip)));
-  transition: --rx .5s var(--ease), --ry .5s var(--ease);
+/* Hero logo: a flat badge with a soft shadow. Hidden while the loader is up, because the loader's logo flies into its place. */
+.hero-logo { display: grid; width: 100%; aspect-ratio: 1; filter: drop-shadow(6px 12px 14px rgb(0 0 0 / .45)); }
+
+/* Spinning badge: the logo image is stacked twice. The outer copy shows only the ring (blue bands and the
+   "ByteWave Digital / Ideas into digital reality" text) and turns slowly; the inner copy shows only the white
+   centre disc with "BW Digital", which stays still. The badge centre sits at 49.9% / 48.4% of the image and
+   the cut runs through the thin white gap between the centre disc and the light blue band (27.3% of the width). */
+.spin-logo { display: inline-grid; flex: none; }
+.spin-logo > img { grid-area: 1 / 1; display: block; width: 100%; height: 100%; }
+.spin-ring {
+  transform-origin: 49.92% 48.36%;
+  -webkit-mask-image: radial-gradient(27.3% 27.3% at 49.92% 48.36%, transparent 99%, #000 100%);
+  mask-image: radial-gradient(27.3% 27.3% at 49.92% 48.36%, transparent 99%, #000 100%);
 }
-/* The badge circle fills 94.4% of the image and sits 1.25% from the top. */
-.coin-edge, .coin-back, .coin-sheen { position: absolute; left: 2.8%; top: 1.25%; width: 94.4%; aspect-ratio: 1; border-radius: 50%; }
-.coin-edge { transform: translateZ(calc(var(--z) * 1px)); background: linear-gradient(180deg, #eef1f4, #aab4bf 55%, #7d8a98); }
-.coin-back {
-  transform: translateZ(-13px) rotateY(180deg); backface-visibility: hidden;
-  background: radial-gradient(circle, var(--navy-2) 0 34%, transparent 34.5%), repeating-radial-gradient(circle, var(--navy) 0 6px, var(--navy-deep) 6px 8px);
-  box-shadow: inset 0 0 0 10px #dfe4ea;
+.spin-core {
+  -webkit-mask-image: radial-gradient(27.3% 27.3% at 49.92% 48.36%, #000 99%, transparent 100%);
+  mask-image: radial-gradient(27.3% 27.3% at 49.92% 48.36%, #000 99%, transparent 100%);
 }
-.coin-face { position: absolute; inset: 0; width: 100%; height: auto; transform: translateZ(1px); backface-visibility: hidden; }
-.coin-sheen {
-  transform: translateZ(2px); pointer-events: none; overflow: hidden; mix-blend-mode: screen; backface-visibility: hidden;
-  background: linear-gradient(115deg, transparent 34%, rgb(255 255 255 / .11) 47%, rgb(255 255 255 / .03) 55%, transparent 64%);
-  background-size: 260% 100%; background-position: calc(50% - var(--tx) * 60%) 0;
-  transition: background-position .5s var(--ease);
+.brand .spin-logo { width: 36px; height: 36px; }
+@media (prefers-reduced-motion: no-preference) {
+  .is-ready .spin-ring { animation: badge-spin 18s linear infinite; }
 }
-/* Entrance only: two halves of the logo split by a zigzag crack. Hidden otherwise (and with reduced motion). */
-.coin-half { position: absolute; inset: 0; width: 100%; height: auto; opacity: 0; pointer-events: none; }
-.hl { clip-path: polygon(0% 0%, 52% 0%, 47% 12%, 54% 24%, 46% 37%, 53% 50%, 45% 62%, 52% 75%, 46% 88%, 51% 100%, 0% 100%); }
-.hr { clip-path: polygon(52% 0%, 47% 12%, 54% 24%, 46% 37%, 53% 50%, 45% 62%, 52% 75%, 46% 88%, 51% 100%, 100% 100%, 100% 0%); }
-.coin-shadow {
-  position: absolute; inset: 4%; z-index: -1; border-radius: 50%; background: rgb(0 0 0 / .55);
-  translate: calc(8px - var(--tx, 0) * 6px) 12px; filter: blur(10px);
+@keyframes badge-spin { to { rotate: 360deg; } }
+.is-loading .hero-logo { visibility: hidden; }
+
+/* ---------- Page loader: big logo on black, then the logo flies to the hero and the black fades away ---------- */
+.loader { display: none; }
+.js .loader { display: block; position: fixed; inset: 0; z-index: 1000; pointer-events: none; }
+.js.is-loading { overflow: hidden; }
+.js.is-loading .loader { pointer-events: auto; }
+.loader-bg { position: absolute; inset: 0; background: #000; }
+.loader-logo {
+  position: absolute; left: 50%; top: 50%; width: min(58vmin, 420px); height: auto;
+  translate: -50% -50%; transform-origin: 50% 50%;
 }
 @media (prefers-reduced-motion: no-preference) {
-  /* Entrance timeline: drop starts at .15s, lands at .9s, bounces land at 1.4s and 1.65s, settled by 1.85s. */
-  /* Halves drift in from either side (.95s), slow down, then snap together at 1.65s.
-     The whole coin takes over at that moment with a small knock and wobble. */
-  .js .hl { animation: half-l 1s .65s both, half-off .01s 1.65s forwards; }
-  .js .hr { animation: half-r 1s .65s both, half-off .01s 1.65s forwards; }
-  .js .coin { animation: coin-join .9s 1.65s both; }
-  .js .coin-shadow { animation: shadow-join 1s .65s both; }
-  .js .hero-bg { animation: photo-in 1.4s var(--ease) both; }
-  .coin.is-flipping { animation: coin-flip .9s cubic-bezier(.3, 1.35, .5, 1); }
+  .is-loading .loader-logo { animation: loader-in .7s cubic-bezier(.2, .8, .3, 1) both, loader-breathe 1.8s .7s ease-in-out infinite; }
 }
-@keyframes header-in { from { translate: 0 -120px; opacity: 0; } }
-@keyframes text-drop {
-  0% { translate: 0 -110vh; scale: 1; animation-timing-function: cubic-bezier(.55, 0, 1, .45); }
-  57% { translate: 0 0; scale: 1.02 .93; animation-timing-function: cubic-bezier(0, .55, .45, 1); }
-  63% { scale: 1; }
-  73% { translate: 0 -22px; animation-timing-function: cubic-bezier(.55, 0, 1, .45); }
-  85% { translate: 0 0; animation-timing-function: cubic-bezier(0, .55, .45, 1); }
-  92% { translate: 0 -5px; animation-timing-function: cubic-bezier(.55, 0, 1, .45); }
-  100% { translate: 0 0; scale: 1; }
-}
-@keyframes coin-drop {
-  0% { translate: 0 -135vh; --flip: -720deg; scale: 1; animation-timing-function: cubic-bezier(.55, 0, 1, .45); }
-  44% { translate: 0 0; --flip: 0deg; scale: 1.07 .9; animation-timing-function: cubic-bezier(0, .55, .45, 1); }
-  48% { scale: 1; }
-  59% { translate: 0 -64px; animation-timing-function: cubic-bezier(.55, 0, 1, .45); }
-  73.5% { translate: 0 0; scale: 1.04 .95; animation-timing-function: cubic-bezier(0, .55, .45, 1); }
-  76% { scale: 1; }
-  81% { translate: 0 -20px; animation-timing-function: cubic-bezier(.55, 0, 1, .45); }
-  88% { translate: 0 0; animation-timing-function: cubic-bezier(0, .55, .45, 1); }
-  93% { translate: 0 -5px; animation-timing-function: cubic-bezier(.55, 0, 1, .45); }
-  100% { translate: 0 0; --flip: 0deg; scale: 1; }
-}
-/* A coin set down on a table: it rocks on its rim while the tilt circles around faster and smaller, then lies flat. */
-@keyframes coin-settle {
-  0% { scale: 1.14; opacity: 0; rotate: 1 0 0 0deg; animation-timing-function: cubic-bezier(.5, 0, .9, .5); }
-  14% { opacity: 1; }
-  30% { scale: 1; rotate: 1 0 0 14deg; }
-  40% { rotate: 0 1 0 12deg; }
-  48% { rotate: -1 0 0 10deg; }
-  55% { rotate: 0 -1 0 8deg; }
-  61% { rotate: 1 0 0 6.5deg; }
-  66% { rotate: 0 1 0 5deg; }
-  70.5% { rotate: -1 0 0 3.8deg; }
-  74.5% { rotate: 0 -1 0 2.8deg; }
-  78% { rotate: 1 0 0 2deg; }
-  81% { rotate: 0 1 0 1.3deg; }
-  84% { rotate: -1 0 0 0.8deg; }
-  87% { rotate: 0 -1 0 0.4deg; }
-  100% { scale: 1; opacity: 1; rotate: 1 0 0 0deg; }
-}
-@keyframes shadow-settle {
-  0% { opacity: 0; translate: 46px 64px; filter: blur(26px); scale: 1.12; animation-timing-function: cubic-bezier(.5, 0, .9, .5); }
-  30% { opacity: 1; translate: 8.0px -0.6px; filter: blur(10px); scale: 1; }
-  40% { opacity: 1; translate: 18.8px 12.0px; filter: blur(10px); scale: 1; }
-  48% { opacity: 1; translate: 8.0px 21.0px; filter: blur(10px); scale: 1; }
-  55% { opacity: 1; translate: 0.8px 12.0px; filter: blur(10px); scale: 1; }
-  61% { opacity: 1; translate: 8.0px 6.1px; filter: blur(10px); scale: 1; }
-  66% { opacity: 1; translate: 12.5px 12.0px; filter: blur(10px); scale: 1; }
-  70.5% { opacity: 1; translate: 8.0px 15.4px; filter: blur(10px); scale: 1; }
-  74.5% { opacity: 1; translate: 5.5px 12.0px; filter: blur(10px); scale: 1; }
-  78% { opacity: 1; translate: 8.0px 10.2px; filter: blur(10px); scale: 1; }
-  81% { opacity: 1; translate: 9.2px 12.0px; filter: blur(10px); scale: 1; }
-  84% { opacity: 1; translate: 8.0px 12.7px; filter: blur(10px); scale: 1; }
-  87% { opacity: 1; translate: 7.6px 12.0px; filter: blur(10px); scale: 1; }
-  100% { opacity: 1; translate: 8px 12px; filter: blur(10px); scale: 1; }
-}
-@keyframes half-l {
-  0% { opacity: 0; translate: -260% 10%; rotate: -24deg; animation-timing-function: cubic-bezier(.2, .7, .4, 1); }
-  20% { opacity: 1; }
-  72% { opacity: 1; translate: -40% 2%; rotate: -6deg; animation-timing-function: cubic-bezier(.7, 0, 1, .6); }
-  100% { opacity: 1; translate: 0 0; rotate: 0deg; }
-}
-@keyframes half-r {
-  0% { opacity: 0; translate: 260% -10%; rotate: 24deg; animation-timing-function: cubic-bezier(.2, .7, .4, 1); }
-  20% { opacity: 1; }
-  72% { opacity: 1; translate: 40% -2%; rotate: 6deg; animation-timing-function: cubic-bezier(.7, 0, 1, .6); }
-  100% { opacity: 1; translate: 0 0; rotate: 0deg; }
-}
-@keyframes half-off { to { opacity: 0; } }
-@keyframes coin-join {
-  0% { opacity: 0; }
-  1% { opacity: 1; scale: 1.06 .95; rotate: 1 0 0 0deg; }
-  14% { scale: .98 1.02; }
-  24% { scale: 1; rotate: 1 0 0 5deg; }
-  38% { rotate: 0 1 0 4deg; }
-  52% { rotate: -1 0 0 3deg; }
-  64% { rotate: 0 -1 0 2deg; }
-  76% { rotate: 1 0 0 1deg; }
-  100% { opacity: 1; scale: 1; rotate: 1 0 0 0deg; }
-}
-@keyframes shadow-join { from { opacity: 0; scale: .7; } }
-@keyframes coin-flip { from { --flip: 0deg; } to { --flip: 360deg; } }
-@keyframes shadow-drop {
-  0% { opacity: 0; scale: .2; } 44% { opacity: 1; scale: 1.12; } 59% { opacity: .65; scale: .78; }
-  73.5% { opacity: 1; scale: 1.05; } 81% { opacity: .85; scale: .92; } 88%, 100% { opacity: 1; scale: 1; }
-}
-@keyframes photo-in { from { opacity: 0; scale: 1.06; } }
-/* From above: the coin comes down toward the desk (shrinks from close to the camera), spinning, then settles. */
+@keyframes loader-in { from { opacity: 0; scale: .9; } }
+@keyframes loader-breathe { 50% { scale: 1.035; } }
+
 /* ---------- Deck: mission-control view of everything we build (normal scroll, nothing pinned) ---------- */
 .deck {
   position: relative; isolation: isolate; overflow: clip;
@@ -456,17 +371,20 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   color: var(--on-dark);
 }
 .deck-stars { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; }
-.deck-floor {
-  position: absolute; left: -30%; right: -30%; bottom: 0; z-index: -1; height: 46%;
-  background-image:
-    repeating-linear-gradient(90deg, rgb(92 207 166 / .22) 0 1px, transparent 1px 90px),
-    repeating-linear-gradient(0deg, rgb(92 207 166 / .22) 0 1px, transparent 1px 90px);
-  transform: perspective(520px) rotateX(64deg); transform-origin: 50% 100%;
-  -webkit-mask-image: linear-gradient(to top, #000 0%, transparent 85%);
-  mask-image: linear-gradient(to top, #000 0%, transparent 85%);
-  pointer-events: none;
+
+/* Card stack into About: the deck sticks once its bottom edge reaches the bottom of the screen (--deck-top, set
+   in site.js from its height) and holds there. A gap of HOLD scrolling follows, with the deck still locked, then
+   About slides up over it like the next card in a stack, with a shadow along its top edge. The deck itself
+   stays exactly as it is underneath. */
+.stack { position: relative; background: var(--navy-night); }
+@media (prefers-reduced-motion: no-preference) {
+  .js .stack > .deck { position: sticky; top: var(--deck-top, 0px); }
+  .js .stack > .about {
+    z-index: 1; margin-top: calc(45vh / var(--vz, 1));   /* the hold: the deck stays locked for this much scrolling */
+    background: var(--cloud);
+    box-shadow: 0 -28px 70px -24px rgb(0 0 0 / .6);
+  }
 }
-@media (prefers-reduced-motion: no-preference) { .deck-floor { animation: floor 5s linear infinite; } }
 
 .deck-head { text-align: center; display: grid; justify-items: center; margin-bottom: clamp(28px, 3vw, 40px); }
 .deck-head .label { margin-bottom: 16px; }
@@ -556,13 +474,23 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   .deck-tab .mono { font-size: .6875rem; }
   .hud { padding: 20px; }
 }
-@keyframes floor { to { background-position: 0 90px, 0 90px; } }
 @keyframes link-x { from { background-position: -60% 0, 0 50%; } to { background-position: 160% 0, 0 50%; } }
 @keyframes link-y { from { background-position: 0 160%, 50% 0; } to { background-position: 0 -60%, 50% 0; } }
 @keyframes hv-move { 0%, 12% { transform: translate(0, 0); } 45%, 70% { transform: translate(-92px, 28px); } 95%, 100% { transform: translate(0, 0); } }
 @keyframes hv-draw { from { stroke-dashoffset: 260; } to { stroke-dashoffset: 0; } }
 
 /* ---------- Sections ---------- */
+/* Scroll-Drawn Curved Lines (SVG stroke + GSAP ScrollTrigger, site.js). Every section from About to Insights
+   (not Contact or the footer) has its own drawing: a mint stroke across the section, with a large loop and a
+   couple of long swells, and a marigold line running parallel just below it. They write themselves (stroke-dashoffset 1 -> 0) with the drawn tip held on a line
+   70% down the screen, so a section's drawing finishes as its bottom passes that line, before it leaves the
+   screen. Each drawing stays inside its section
+   (the section clips it), sits on the background and under the content, is hidden from assistive tech and
+   can't be clicked or focused. With reduced motion, or without GSAP, the curves are simply shown drawn. */
+.flow-lines { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; overflow: visible; transform: translateZ(0); }   /* own layer: redrawing the stroke doesn't repaint the section */
+.flow-lines path { fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1 1; stroke-dashoffset: 0; }
+.flow-lines .fl-1 { stroke: var(--mint); stroke-width: 4; opacity: .6; }
+.flow-lines .fl-2 { stroke: var(--marigold); stroke-width: 2.5; opacity: .55; }
 .section { position: relative; padding-block: clamp(72px, 8vw, 120px); overflow: clip; }
 .section > .wrap { position: relative; z-index: 1; }
 .section-head { margin-bottom: clamp(36px, 4vw, 56px); max-width: 760px; }
@@ -570,9 +498,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   display: inline-flex; align-items: center; gap: 14px; margin-bottom: 24px;
   font: 500 clamp(1.0625rem, 1.4vw, 1.25rem)/1.2 var(--display); letter-spacing: -.01em; color: var(--ink);
 }
-.label .mono { padding: 4px 8px; border: 1px solid var(--line); border-radius: 6px; font-size: .8125rem; letter-spacing: .04em; color: var(--emerald); }
 .label-dark, .process .label { color: var(--on-dark); }
-.label-dark .mono, .process .label .mono { color: var(--mint); border-color: var(--line-dark); }
 h2 { font-size: clamp(2.25rem, 4.8vw, 4.25rem); line-height: 1.02; letter-spacing: -.035em; }
 .section-intro { color: var(--ink-2); max-width: 52ch; margin-top: 24px; font-size: 1.0625rem; }
 
@@ -876,8 +802,7 @@ h2 { font-size: clamp(2.25rem, 4.8vw, 4.25rem); line-height: 1.02; letter-spacin
 .services { background: var(--paper); }
 .service-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
 .service { padding: 16px 16px 28px; display: flex; flex-direction: column; }
-.service h3, .service p, .service .s-num { padding-inline: 8px; }
-.s-num { font-size: .75rem; color: var(--emerald); margin-bottom: 8px; }
+.service h3, .service p { padding-inline: 8px; }
 .scene { aspect-ratio: 240 / 140; margin-bottom: 20px; border-radius: var(--r-md); background: var(--paper); overflow: hidden; }
 .scene svg { width: 100%; height: 100%; display: block; }
 
@@ -961,6 +886,13 @@ h2 { font-size: clamp(2.25rem, 4.8vw, 4.25rem); line-height: 1.02; letter-spacin
 .banner-sq { --bn-bg: #2a0d4a; --bn-glow: rgb(214 38 138 / .32); --bn-accent: #ff6fb5; }
 .banner-qr { --bn-bg: #073b2f; --bn-glow: rgb(233 185 73 / .13); --bn-accent: #e9b949; }
 .showcase-copy { max-width: 520px; }
+/* Product watermark: the product's mark, very faint and oversized, behind the copy. Clipped to the banner's
+   rounded corners by its own box, so the character perched on the banner can still stick out above it. */
+.showcase-mark { position: absolute; inset: 0; z-index: -1; overflow: hidden; border-radius: inherit; pointer-events: none; }
+.showcase-mark img {
+  position: absolute; right: -6%; top: 50%; width: min(620px, 58%); height: auto;
+  translate: 0 -50%; rotate: -12deg; opacity: .06;
+}
 .status { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 20px; padding: 6px 12px 6px 10px; border: 1px solid rgb(247 245 241 / .22); border-radius: 999px; font-size: .8125rem; font-weight: 500; color: rgb(247 245 241 / .85); }
 .status .i { width: 16px; height: 16px; color: var(--bn-accent); }
 .showcase-copy h3 { font-size: clamp(2rem, 3.6vw, 3.25rem); letter-spacing: -.035em; line-height: 1.02; margin-bottom: 20px; color: var(--cloud); }
@@ -1085,7 +1017,7 @@ h2 { font-size: clamp(2.25rem, 4.8vw, 4.25rem); line-height: 1.02; letter-spacin
   }
 }
 .step {
-  position: relative; display: grid; grid-template-columns: 56px 1fr; gap: 16px;
+  position: relative; display: grid; grid-template-columns: 1fr; gap: 16px;
   padding: 28px; border: 1px solid var(--line-dark); border-radius: var(--r-lg);
   background: rgb(247 245 241 / .03);
   transition: background-color var(--mid), border-color var(--mid);
@@ -1100,7 +1032,6 @@ h2 { font-size: clamp(2.25rem, 4.8vw, 4.25rem); line-height: 1.02; letter-spacin
 .step-node .i { width: 18px; height: 18px; }
 .step:hover { background: rgb(247 245 241 / .06); border-color: rgb(247 245 241 / .24); }
 .step:hover .step-node { background: var(--mint); color: var(--navy-deep); rotate: -8deg; }
-.step-n { font-size: 2rem; line-height: 1; color: var(--mint); font-weight: 400; }
 .step h3 { font-size: 1.5rem; letter-spacing: -.02em; margin-bottom: 8px; }
 .step p { color: var(--on-dark-2); font-size: .9375rem; }
 
@@ -1250,6 +1181,7 @@ h2 { font-size: clamp(2.25rem, 4.8vw, 4.25rem); line-height: 1.02; letter-spacin
 .footer { background: var(--navy-night); color: var(--on-dark-2); padding-top: clamp(72px, 8vw, 120px); }
 .footer-cta { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 32px; padding-bottom: clamp(48px, 6vw, 80px); border-bottom: 1px solid var(--line-dark); }
 .footer-big { font: 500 clamp(2.5rem, 7vw, 6rem)/.95 var(--display); letter-spacing: -.045em; color: var(--on-dark); max-width: 12ch; }
+.footer-big .fb-line { display: inline-block; }   /* each line moves on its own in the footer entrance */
 .footer-cols { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; padding-block: 56px; }
 .brand-dark { color: var(--on-dark); margin-bottom: 16px; }
 .footer-brand p { max-width: 34ch; font-size: .9375rem; }
