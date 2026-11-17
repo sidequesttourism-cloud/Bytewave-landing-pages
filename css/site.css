@@ -206,7 +206,15 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .drawer[open] { clip-path: ellipse(150% 150% at var(--ox) var(--oy)); }
 @starting-style { .drawer[open] { clip-path: ellipse(0% 0% at var(--ox) var(--oy)); } }
 .drawer::backdrop { background: transparent; }
-.drawer-sheet { display: grid; grid-template-rows: auto 1fr auto; width: var(--wrap); max-width: 720px; height: 100%; margin-inline: auto; padding: 24px 0; }
+/* The ByteWave badge on the menu's right edge, centred on the edge so exactly half of it is on screen, its blue
+   ring turning like the hero logo. Its own clipped layer keeps the hidden half from making the menu scroll. */
+.drawer-mark { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+.drawer-mark .spin-logo {
+  position: absolute; top: 50%; left: 100%; translate: -50% -50%;
+  width: min(72vh / var(--vz, 1), 640px, 80vw); aspect-ratio: 1;
+  filter: drop-shadow(-8px 14px 24px rgb(0 0 0 / .45));
+}
+.drawer-sheet { position: relative; z-index: 1; display: grid; grid-template-rows: auto 1fr auto; width: var(--wrap); max-width: 720px; height: 100%; margin-inline: auto; padding: 24px 0; }
 .drawer-top { display: flex; justify-content: space-between; align-items: center; color: var(--on-dark-3); font-size: .8125rem; }
 .drawer .icon-btn { border-color: var(--line-dark); color: var(--on-dark); }
 .drawer .icon-btn:hover { background: rgb(247 245 241 / .08); }
@@ -214,10 +222,20 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .drawer-nav a {
   display: flex; align-items: baseline; gap: 16px; padding: 10px 0;
   font: 500 clamp(1.75rem, 6vw, 2.25rem)/1.1 var(--display); letter-spacing: -.02em;
-  border-bottom: 1px solid var(--line-dark);
-  transition: color var(--fast), padding-left .35s var(--ease);
+  transition: color var(--fast);
 }
-.drawer-nav a:hover { padding-left: 8px; color: var(--mint); }
+.drawer-nav a:hover, .drawer-nav a:focus-visible { color: var(--mint); }
+/* Roll stagger (site.js splits each link into letters): every letter is a one-line window holding the letter
+   twice, stacked. On hover the stack slides up one line, letter by letter from the left, so the word rolls over
+   into a fresh copy of itself. */
+.drawer-nav .roll { display: inline-flex; overflow: hidden; line-height: 1.1; padding-bottom: .12em; margin-bottom: -.12em; }   /* room for the tail of g */
+.drawer-nav .roll-ch { display: inline-block; position: relative; white-space: pre; }
+/* The copy waits one line plus the descender room below the letter, so not even its top edge peeks out. */
+.drawer-nav .roll-ch::after { content: attr(data-c); position: absolute; left: 0; top: calc(100% + .12em); }
+@media (prefers-reduced-motion: no-preference) {
+  .drawer-nav .roll-ch { transition: translate .5s cubic-bezier(.7, 0, .2, 1); transition-delay: calc(var(--i, 0) * 28ms); }
+  .drawer-nav a:is(:hover, :focus-visible) .roll-ch { translate: 0 calc(-100% - .12em); }
+}
 .drawer-foot { display: grid; gap: 12px; font-size: .875rem; color: var(--on-dark-2); }
 .drawer-foot a { display: flex; align-items: center; gap: 10px; overflow-wrap: anywhere; }
 @media (prefers-reduced-motion: no-preference) {

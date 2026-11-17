@@ -226,7 +226,26 @@
   /* Drawer */
   const drawer = $('#drawer');
   const openBtn = $('[data-menu-open]');
-  $$('.drawer-nav a', drawer).forEach((a, i) => a.style.setProperty('--n', i));
+  $$('.drawer-nav a', drawer).forEach((a, i) => {
+    a.style.setProperty('--n', i);
+    // Roll stagger on hover (site.css): split the label into letters. Screen readers keep the plain word.
+    const label = a.textContent.trim();
+    const roll = document.createElement('span');
+    roll.className = 'roll';
+    roll.setAttribute('aria-hidden', 'true');
+    [...label].forEach((c, k) => {
+      const ch = document.createElement('span');
+      ch.className = 'roll-ch';
+      ch.dataset.c = c;
+      ch.textContent = c;
+      ch.style.setProperty('--i', k);
+      roll.append(ch);
+    });
+    const sr = document.createElement('span');
+    sr.className = 'sr-only';
+    sr.textContent = label;
+    a.replaceChildren(roll, sr);
+  });
   // The menu opens as an ellipse growing out of the menu button: point the ellipse's centre at the button, as a
   // share of the screen so the page zoom doesn't matter.
   const aimDrawer = () => {
