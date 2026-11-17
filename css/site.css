@@ -1038,6 +1038,12 @@ h2 { font-size: clamp(2.25rem, 4.8vw, 4.25rem); line-height: 1.02; letter-spacin
 /* ---------- FAQ ---------- */
 .faq-grid { display: grid; grid-template-columns: .8fr 1.2fr; gap: clamp(40px, 6vw, 96px); align-items: start; }
 .faq-list { border-top: 1px solid var(--line); }
+/* Questions: the flow lines run right through the heading and the question list here, so they are fainter in
+   this section and the text gets a soft halo in the page colour, which lifts each letter off any line behind it. */
+.faq .flow-lines { opacity: .4; }
+.faq .label, .faq h2, .faq .qa summary, .faq .qa p {
+  text-shadow: 0 0 2px var(--cloud), 0 0 6px var(--cloud), 0 0 14px var(--cloud), 0 0 22px var(--cloud);
+}
 .qa { border-bottom: 1px solid var(--line); interpolate-size: allow-keywords; }
 .qa summary {
   display: flex; justify-content: space-between; align-items: center; gap: 24px;
