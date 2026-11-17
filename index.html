@@ -202,11 +202,15 @@
   </script>
   <link rel="preload" href="assets/fonts/inter-var-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/space-grotesk-var-latin.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="css/site.css?v=20261116b">
+  <link rel="stylesheet" href="css/portal.css?v=20261117a">
+  <script src="js/portal.js?v=20261117a"></script>
+  <link rel="stylesheet" href="css/site.css?v=20261117t">
   <!-- GSAP + ScrollTrigger, available to site.js as window.gsap / window.ScrollTrigger for scroll-linked animation. -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt" crossorigin="anonymous" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" integrity="sha384-Z3REaz79l2IaAZqJsSABtTbhjgOUYyV3p90XNnAPCSHg3EMTz1fouunq9WZRtj3d" crossorigin="anonymous" defer></script>
-  <script src="js/site.js?v=20261116b" defer></script>
+  <script src="js/flowmap.js?v=20261117d" defer></script>
+  <script src="js/rgb-fluid.js?v=20261117e" defer></script>
+  <script src="js/site.js?v=20261117e" defer></script>
 </head>
 <body>
   <!-- Page loader: big logo on black. When the page is ready the logo flies to its spot in the hero while the black fades away. -->
@@ -263,7 +267,7 @@
         <a href="#insights">Insights</a>
       </nav>
       <div class="header-actions">
-        <a class="btn btn-primary btn-sm btn-go" href="#contact" data-magnetic><span>Start a project</span><svg class="i" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+        <a class="btn btn-primary btn-sm btn-go" href="start.html" data-magnetic><span>Start a project</span><svg class="i" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
         <button class="menu-btn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="drawer" data-menu-open>
           <svg class="i" aria-hidden="true"><use href="#i-menu"/></svg>
         </button>
@@ -278,13 +282,13 @@
         <button class="icon-btn" type="button" aria-label="Close menu" data-menu-close autofocus><svg class="i" aria-hidden="true"><use href="#i-x"/></svg></button>
       </div>
       <nav class="drawer-nav" aria-label="Mobile">
-        <a href="#home"><span class="mono">01</span>Home</a>
-        <a href="#about"><span class="mono">02</span>About</a>
-        <a href="#services"><span class="mono">03</span>Services</a>
-        <a href="#work"><span class="mono">04</span>Work</a>
-        <a href="#process"><span class="mono">05</span>Process</a>
-        <a href="#insights"><span class="mono">06</span>Insights</a>
-        <a href="#contact"><span class="mono">07</span>Contact</a>
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#services">Services</a>
+        <a href="#work">Work</a>
+        <a href="#process">Process</a>
+        <a href="#insights">Insights</a>
+        <a href="#contact">Contact</a>
       </nav>
       <div class="drawer-foot">
         <a href="mailto:Aziq@bytewave-digitalbrunei.com"><svg class="i" aria-hidden="true"><use href="#i-mail"/></svg>Aziq@bytewave-digitalbrunei.com</a>
@@ -295,7 +299,7 @@
 
   <main id="main">
     <!-- HERO -->
-    <section class="hero" id="home" aria-labelledby="hero-title" data-hero>
+    <section class="hero" id="home" aria-labelledby="hero-title" data-hero data-flow="photo">
       <img class="hero-bg" src="assets/hero-desk-top-1672.webp" srcset="assets/hero-desk-top-1000.webp 1000w, assets/hero-desk-top-1672.webp 1672w" sizes="100vw" alt="" width="1672" height="941" fetchpriority="high">
       <div class="wrap hero-grid">
         <div class="hero-copy">
@@ -309,7 +313,7 @@
           </h1>
           <p class="hero-lead" data-intro style="--d:3">Got an idea that deserves to exist? We help you shape it, build it and launch it, right here in Brunei.</p>
           <div class="hero-actions" data-intro style="--d:4">
-            <a class="btn btn-primary btn-go" href="#contact" data-magnetic><span>Start a project</span><svg class="i" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+            <a class="btn btn-primary btn-go" href="start.html" data-magnetic><span>Start a project</span><svg class="i" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
             <a class="btn btn-ghost" href="#work"><span>See our work</span></a>
           </div>
           <!-- Icon marquee: our own products (QRskan, SideQuest Tourism), widely spaced. Two identical sets loop forever; the direction follows the page scroll (site.js). -->
@@ -908,7 +912,43 @@
 
     <!-- CONTACT -->
     <section class="contact" id="contact" aria-labelledby="contact-title">
-      <div class="contact-glow" aria-hidden="true"></div>
+      <!-- Two rotating rings of our product marks (SideQuest Tourism, QRskan): each logo sits on the circle and
+           its name curves along it. Desktop: half off the left and right edges. Phones: half off the top and
+           bottom. (site.css) -->
+      <div class="contact-ring contact-ring-l" aria-hidden="true">
+        <svg class="cr-spin" viewBox="0 0 600 600" focusable="false">
+          <defs><path id="cr-path-l" d="M300,45 a255,255 0 1,1 -0.01,0"/></defs>
+          <g transform="rotate(3.82 300 300)"><image href="assets/tourism/sidequest-mark.svg" x="283.0" y="28.0" width="34" height="34"/></g>
+          <text><textPath href="#cr-path-l" startOffset="46.0">SideQuest Tourism</textPath></text>
+          <g transform="rotate(79.55 300 300)"><image href="assets/qrskan/qrskan-mark.svg" x="283.0" y="28.0" width="34" height="34"/></g>
+          <text><textPath href="#cr-path-l" startOffset="383.0">QRskan</textPath></text>
+          <g transform="rotate(123.82 300 300)"><image href="assets/tourism/sidequest-mark.svg" x="283.0" y="28.0" width="34" height="34"/></g>
+          <text><textPath href="#cr-path-l" startOffset="580.1">SideQuest Tourism</textPath></text>
+          <g transform="rotate(199.55 300 300)"><image href="assets/qrskan/qrskan-mark.svg" x="283.0" y="28.0" width="34" height="34"/></g>
+          <text><textPath href="#cr-path-l" startOffset="917.1">QRskan</textPath></text>
+          <g transform="rotate(243.82 300 300)"><image href="assets/tourism/sidequest-mark.svg" x="283.0" y="28.0" width="34" height="34"/></g>
+          <text><textPath href="#cr-path-l" startOffset="1114.1">SideQuest Tourism</textPath></text>
+          <g transform="rotate(319.55 300 300)"><image href="assets/qrskan/qrskan-mark.svg" x="283.0" y="28.0" width="34" height="34"/></g>
+          <text><textPath href="#cr-path-l" startOffset="1451.2">QRskan</textPath></text>
+        </svg>
+      </div>
+      <div class="contact-ring contact-ring-r" aria-hidden="true">
+        <svg class="cr-spin" viewBox="0 0 600 600" focusable="false">
+          <defs><path id="cr-path-r" d="M300,45 a255,255 0 1,1 -0.01,0"/></defs>
+          <g transform="rotate(3.82 300 300)"><image href="assets/tourism/sidequest-mark.svg" x="283.0" y="28.0" width="34" height="34"/></g>
+          <text><textPath href="#cr-path-r" startOffset="46.0">SideQuest Tourism</textPath></text>
+          <g transform="rotate(79.55 300 300)"><image href="assets/qrskan/qrskan-mark.svg" x="283.0" y="28.0" width="34" height="34"/></g>
+          <text><textPath href="#cr-path-r" startOffset="383.0">QRskan</textPath></text>
+          <g transform="rotate(123.82 300 300)"><image href="assets/tourism/sidequest-mark.svg" x="283.0" y="28.0" width="34" height="34"/></g>
+          <text><textPath href="#cr-path-r" startOffset="580.1">SideQuest Tourism</textPath></text>
+          <g transform="rotate(199.55 300 300)"><image href="assets/qrskan/qrskan-mark.svg" x="283.0" y="28.0" width="34" height="34"/></g>
+          <text><textPath href="#cr-path-r" startOffset="917.1">QRskan</textPath></text>
+          <g transform="rotate(243.82 300 300)"><image href="assets/tourism/sidequest-mark.svg" x="283.0" y="28.0" width="34" height="34"/></g>
+          <text><textPath href="#cr-path-r" startOffset="1114.1">SideQuest Tourism</textPath></text>
+          <g transform="rotate(319.55 300 300)"><image href="assets/qrskan/qrskan-mark.svg" x="283.0" y="28.0" width="34" height="34"/></g>
+          <text><textPath href="#cr-path-r" startOffset="1451.2">QRskan</textPath></text>
+        </svg>
+      </div>
       <div class="wrap contact-grid">
         <div class="contact-copy">
           <p class="label label-dark">Contact</p>
@@ -918,39 +958,9 @@
           <ul class="contact-list">
             <li><svg class="i" aria-hidden="true"><use href="#i-mail"/></svg><a href="mailto:Aziq@bytewave-digitalbrunei.com">Aziq@bytewave-digitalbrunei.com</a></li>
             <li><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg><a href="tel:+6738194908">+673 819 4908</a></li>
-            <li><svg class="i" aria-hidden="true"><use href="#i-map-pin"/></svg><span>Bandar Seri Begawan, Brunei</span></li>
+            <li><svg class="i" aria-hidden="true"><use href="#i-map-pin"/></svg><span>Office 16, 2nd floor, iCentre, WWPR+VPJ, Bandar Seri Begawan BB3713</span></li>
           </ul>
         </div>
-
-        <form class="form" action="https://api.web3forms.com/submit" method="post" novalidate data-form>
-          <p class="form-title">Or send us a message</p>
-          <input type="hidden" name="access_key" value="c6847f68-6d23-4717-bd32-699167d6ecc4">
-          <input type="hidden" name="subject" value="New ByteWave Website Inquiry">
-          <input type="hidden" name="from_name" value="ByteWave Digital Website">
-          <div class="honeypot" aria-hidden="true"><label>Leave this field empty<input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off"></label></div>
-          <div class="field-row">
-            <div class="field"><input id="f-name" name="name" type="text" autocomplete="name" required maxlength="100" placeholder=" "><label for="f-name">Name</label></div>
-            <div class="field"><input id="f-email" name="email" type="email" autocomplete="email" required maxlength="160" placeholder=" "><label for="f-email">Email</label></div>
-          </div>
-          <div class="field"><input id="f-org" name="organisation" type="text" autocomplete="organization" maxlength="120" placeholder=" "><label for="f-org">Organisation (optional)</label></div>
-          <fieldset class="pick">
-            <legend>What do you need?</legend>
-            <div class="pick-options">
-              <label><input type="radio" name="service" value="Website"><span>Website</span></label>
-              <label><input type="radio" name="service" value="Software"><span>Software</span></label>
-              <label><input type="radio" name="service" value="UI/UX design"><span>UI/UX design</span></label>
-              <label><input type="radio" name="service" value="AI and automation"><span>AI and automation</span></label>
-              <label><input type="radio" name="service" value="Not sure yet"><span>Not sure yet</span></label>
-            </div>
-          </fieldset>
-          <div class="field"><textarea id="f-msg" name="message" rows="4" required minlength="20" maxlength="3000" placeholder=" "></textarea><label for="f-msg">Tell us about your idea</label></div>
-          <div class="msg-meter" aria-hidden="true" data-meter><span></span><em>0 / 20 characters</em></div>
-          <p class="form-note">By sending this form you agree that we use your details to reply to you, as set out in our <a href="privacy.html">Privacy Policy</a>.</p>
-          <div class="form-foot">
-            <button class="btn btn-primary" type="submit" data-magnetic><span>Send message</span><svg class="i" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
-            <p class="form-status" role="status" aria-live="polite" data-form-status></p>
-          </div>
-        </form>
       </div>
     </section>
   </main>

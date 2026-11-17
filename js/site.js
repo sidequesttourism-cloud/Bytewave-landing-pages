@@ -71,8 +71,15 @@
     setTimeout(() => requestAnimationFrame(revealPage), Math.max(0, MIN_SHOW - (performance.now() - started)));
   };
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-  if (document.readyState === 'complete') tryReveal(); else addEventListener('load', tryReveal, { once: true });
-  setTimeout(tryReveal, MAX_WAIT);
+  if (root.classList.contains('portal-return')) {
+    // Back from Start a project through the portal fold (js/portal.js): no loader, the page is shown at once.
+    revealed = true;
+    scrollTo(0, 0);
+    finishLoader();
+  } else {
+    if (document.readyState === 'complete') tryReveal(); else addEventListener('load', tryReveal, { once: true });
+    setTimeout(tryReveal, MAX_WAIT);
+  }
 
   /* ---------- Split headings into words ---------- */
   $$('.split').forEach((el) => {
@@ -185,7 +192,15 @@
   const drawer = $('#drawer');
   const openBtn = $('[data-menu-open]');
   $$('.drawer-nav a', drawer).forEach((a, i) => a.style.setProperty('--n', i));
-  openBtn?.addEventListener('click', () => { drawer.showModal(); openBtn.setAttribute('aria-expanded', 'true'); });
+  // The menu opens as an ellipse growing out of the menu button: point the ellipse's centre at the button, as a
+  // share of the screen so the page zoom doesn't matter.
+  const aimDrawer = () => {
+    if (!openBtn) return;
+    const r = openBtn.getBoundingClientRect();
+    drawer.style.setProperty('--ox', `${(((r.left + r.width / 2) / innerWidth) * 100).toFixed(2)}%`);
+    drawer.style.setProperty('--oy', `${(((r.top + r.height / 2) / innerHeight) * 100).toFixed(2)}%`);
+  };
+  openBtn?.addEventListener('click', () => { aimDrawer(); drawer.showModal(); openBtn.setAttribute('aria-expanded', 'true'); });
   $('[data-menu-close]', drawer)?.addEventListener('click', () => drawer.close());
   drawer?.addEventListener('close', () => openBtn?.setAttribute('aria-expanded', 'false'));
   $$('a', drawer).forEach((a) => a.addEventListener('click', () => drawer.close()));
@@ -334,23 +349,6 @@
       btn.addEventListener('pointerleave', () => { btn.style.setProperty('--tx', '0px'); btn.style.setProperty('--ty', '0px'); });
     });
 
-    // Hero glow
-    const glow = $('.hero-glow');
-    hero?.addEventListener('pointermove', (e) => {
-      const r = hero.getBoundingClientRect();
-      glow?.style.setProperty('--gx', `${((e.clientX - r.left) / r.width) * 100}%`);
-      glow?.style.setProperty('--gy', `${((e.clientY - r.top) / r.height) * 100}%`);
-    });
-
-    // Contact glow
-    const contact = $('.contact');
-    const cGlow = $('.contact-glow');
-    contact?.addEventListener('pointermove', (e) => {
-      const r = contact.getBoundingClientRect();
-      cGlow.style.setProperty('--gx', `${((e.clientX - r.left) / r.width) * 100}%`);
-      cGlow.style.setProperty('--gy', `${((e.clientY - r.top) / r.height) * 100}%`);
-    });
-
     // Product shot tilt
     $$('.shot-btn').forEach((shot) => {
       shot.addEventListener('pointermove', (e) => {
@@ -364,64 +362,7 @@
   }
 
 
-  /* ---------- Contact form: validates here, then posts to Web3Forms (same account as the old site) ---------- */
-  const form = $('[data-form]');
-  if (form) {
-    const status = $('[data-form-status]', form);
-    const submit = $('button[type="submit"]', form);
-    const rules = {
-      name: (v) => v.trim().length >= 2 || 'Please enter your name.',
-      email: (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) || 'Please enter a valid email address.',
-      message: (v) => v.trim().length >= 20 || 'A sentence or two helps, at least 20 characters.',
-    };
-    const setError = (input, msg) => {
-      const id = `${input.id}-err`;
-      $(`#${id}`)?.remove();
-      if (msg) {
-        input.setAttribute('aria-invalid', 'true');
-        input.setAttribute('aria-describedby', id);
-        input.closest('.field').insertAdjacentHTML('beforeend', `<span class="field-error" id="${id}"></span>`);
-        $(`#${id}`).textContent = msg;
-      } else {
-        input.removeAttribute('aria-invalid');
-        input.removeAttribute('aria-describedby');
-      }
-    };
-    Object.keys(rules).forEach((name) => form.elements[name].addEventListener('input', (e) => {
-      if (e.target.getAttribute('aria-invalid') === 'true') {
-        const ok = rules[name](e.target.value);
-        setError(e.target, ok === true ? '' : ok);
-      }
-    }));
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      if (submit.getAttribute('aria-busy') === 'true') return;
-      let firstBad = null;
-      Object.entries(rules).forEach(([name, test]) => {
-        const input = form.elements[name];
-        const ok = test(input.value);
-        setError(input, ok === true ? '' : ok);
-        if (ok !== true && !firstBad) firstBad = input;
-      });
-      status.classList.remove('is-ok');
-      if (firstBad) { firstBad.focus(); status.textContent = 'Please check the highlighted fields.'; return; }
-      submit.setAttribute('aria-busy', 'true');
-      status.textContent = 'Sending…';
-      try {
-        const res = await fetch(form.action, { method: 'POST', headers: { Accept: 'application/json' }, body: new FormData(form) });
-        const data = await res.json().catch(() => ({}));
-        if (!res.ok || data.success === false) throw new Error(data.message || 'Send failed');
-        form.reset();
-        form.dispatchEvent(new Event('input'));
-        status.classList.add('is-ok');
-        status.textContent = 'Thank you. Your message has been sent and we will reply soon.';
-      } catch {
-        status.textContent = 'Sorry, your message could not be sent. Please email or WhatsApp us instead.';
-      } finally {
-        submit.removeAttribute('aria-busy');
-      }
-    });
-  }
+  /* Inquiries go through the form on start.html (js/inquiry.js); the home page's Contact section has none. */
 
   /* ---------- Deck: stage tabs, HUD panels, wireframe globe with satellites ---------- */
   const deck = $('[data-deck]');
@@ -736,19 +677,6 @@
         card.style.setProperty('--rx', `${(0.5 - (e.clientY - r.top) / r.height) * 6}deg`);
       });
       card.addEventListener('pointerleave', () => { card.style.setProperty('--rx', '0deg'); card.style.setProperty('--ry', '0deg'); });
-    });
-  }
-
-  /* Message meter: fills toward the 20-character minimum. */
-  const meter = $('[data-meter]');
-  const msg = $('#f-msg');
-  if (meter && msg) {
-    const label = $('em', meter);
-    msg.addEventListener('input', () => {
-      const len = msg.value.trim().length;
-      meter.style.setProperty('--fill', Math.min(1, len / 20));
-      meter.classList.toggle('is-done', len >= 20);
-      label.textContent = len >= 20 ? 'Ready to send' : `${len} / 20 characters`;
     });
   }
 

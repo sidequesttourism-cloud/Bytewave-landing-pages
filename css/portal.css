@@ -1,0 +1,57 @@
+/* Perspective Portal Fold: the page transition between the home page and Start a project.
+   Uses cross-document View Transitions, so it only runs between pages that both include this file
+   (index.html and start.html) and only in browsers that support them; elsewhere the link simply loads the
+   page. js/portal.js tags each navigation as "portal" (going to Start a project) or "portal-back" (returning).
+
+   Going in: the home page tips back and away into the depth of the screen, folding into a shrinking rounded
+   window - the portal - while Start a project unfolds out of that same window towards you, from tilted to
+   flat and from a narrow oval to the full screen. Coming back plays it the other way round. */
+@view-transition { navigation: auto; }
+
+::view-transition { background: #051523; }
+
+/* Back on the home page through the portal: no logo loader, so the portal opens onto the page itself. */
+.portal-return .loader { display: none !important; }
+.portal-return.is-loading { overflow: visible; }
+.portal-return.is-loading .hero-logo { visibility: visible; }
+
+@media (prefers-reduced-motion: no-preference) {
+  :root:active-view-transition-type(portal, portal-back)::view-transition-old(root),
+  :root:active-view-transition-type(portal, portal-back)::view-transition-new(root) {
+    animation-duration: 1s;
+    animation-timing-function: cubic-bezier(.76, 0, .24, 1);
+    animation-fill-mode: both;
+    mix-blend-mode: normal;
+    backface-visibility: hidden;
+  }
+  :root:active-view-transition-type(portal)::view-transition-old(root) { animation-name: portal-away; transform-origin: 50% 0%; }
+  :root:active-view-transition-type(portal)::view-transition-new(root) { animation-name: portal-open; transform-origin: 50% 50%; animation-delay: .12s; }
+  :root:active-view-transition-type(portal-back)::view-transition-old(root) { animation-name: portal-shut; transform-origin: 50% 50%; }
+  :root:active-view-transition-type(portal-back)::view-transition-new(root) { animation-name: portal-return; transform-origin: 50% 0%; animation-delay: .12s; }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+}
+
+/* The old page folds back from its top edge and sinks into a narrowing window. */
+@keyframes portal-away {
+  0%   { transform: perspective(1400px) rotateX(0deg) translateZ(0) scale(1); clip-path: inset(0 round 0); opacity: 1; filter: brightness(1); }
+  60%  { opacity: 1; }
+  100% { transform: perspective(1400px) rotateX(62deg) translateZ(-520px) scale(.72); clip-path: inset(22% 26% round 48px); opacity: 0; filter: brightness(.45); }
+}
+/* The new page opens out of an oval at the centre, untilting as it comes forward. */
+@keyframes portal-open {
+  0%   { transform: perspective(1400px) rotateX(-38deg) translateZ(-360px) scale(.82); clip-path: ellipse(0% 0% at 50% 50%); filter: brightness(.6); }
+  100% { transform: perspective(1400px) rotateX(0deg) translateZ(0) scale(1); clip-path: ellipse(120% 120% at 50% 50%); filter: brightness(1); }
+}
+/* Coming back: the inquiry page closes into the oval... */
+@keyframes portal-shut {
+  0%   { transform: perspective(1400px) rotateX(0deg) translateZ(0) scale(1); clip-path: ellipse(120% 120% at 50% 50%); opacity: 1; }
+  100% { transform: perspective(1400px) rotateX(-38deg) translateZ(-360px) scale(.82); clip-path: ellipse(0% 0% at 50% 50%); opacity: .6; }
+}
+/* ...and the home page folds back up out of the depth. */
+@keyframes portal-return {
+  0%   { transform: perspective(1400px) rotateX(62deg) translateZ(-520px) scale(.72); clip-path: inset(22% 26% round 48px); opacity: 0; filter: brightness(.45); }
+  40%  { opacity: 1; }
+  100% { transform: perspective(1400px) rotateX(0deg) translateZ(0) scale(1); clip-path: inset(0 round 0); opacity: 1; filter: brightness(1); }
+}
