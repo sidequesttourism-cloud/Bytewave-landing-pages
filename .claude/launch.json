@@ -4,8 +4,14 @@
     {
       "name": "site",
       "runtimeExecutable": "python",
-      "runtimeArgs": ["-m", "http.server", "8080", "--directory", "."],
+      "runtimeArgs": [".claude/serve.py", "8080", "C:/Users/NabilN/Desktop/BW landing pages"],
       "port": 8080
+    },
+    {
+      "name": "session-copy",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [".claude/serve.py", "8081", "."],
+      "port": 8081
     }
   ]
 }
