@@ -920,13 +920,13 @@
     if (animate) {
       items.forEach((it) => {
         it.paths.forEach((path) => { path.style.strokeDashoffset = '1'; });
-        // y.v runs 0 -> 1 down the section as the 70% line moves through it. scrub 2.6 lets the stroke glide after
-        // the scroll and settle softly, so even a quick flick of the wheel draws as one calm, continuous motion.
+        // y.v runs 0 -> 1 down the section as the 70% line moves through it. scrub 0.6 keeps the stroke close to the
+        // scroll in both directions (it rewinds as you scroll back up) while still smoothing out a quick flick.
         fg.fromTo(it.y, { v: 0 }, {
           v: 1,
           ease: 'none',
           onUpdate: () => paint(it),
-          scrollTrigger: { trigger: it.sec, start: 'top 70%', end: 'bottom 70%', scrub: 2.6, invalidateOnRefresh: true },
+          scrollTrigger: { trigger: it.sec, start: 'top 70%', end: 'bottom 70%', scrub: 0.6, invalidateOnRefresh: true },
         });
       });
       fST.addEventListener('refreshInit', shape);
