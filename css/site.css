@@ -1073,14 +1073,14 @@ h2 { font-size: clamp(2.25rem, 4.8vw, 4.25rem); line-height: 1.02; letter-spacin
 .section:has(> .flow-lines) { --halo: var(--cloud); }
 .section.services:has(> .flow-lines), .section.insights:has(> .flow-lines) { --halo: var(--paper); }
 .section.process:has(> .flow-lines) { --halo: var(--navy-deep); }
-.section > .flow-lines { opacity: .4; }
+.section > .flow-lines { opacity: .85; }   /* strong enough to watch the line draw itself; the cut-outs keep it off the words */
 .section:has(> .flow-lines) :is(.section-head, .process-head, .statement, .faq-grid > div:first-child, .faq-list) {
   text-shadow: 0 0 2px var(--halo), 0 0 6px var(--halo), 0 0 14px var(--halo), 0 0 22px var(--halo);
 }
-/* Phones: the text fills the screen width, so the lines fade further back (site.js also cuts a solid gap for
-   each text block), and a lighter two-layer halo keeps the letters crisp and is cheaper to repaint while scrolling. */
+/* Phones: the text fills the screen width, so site.js cuts one solid gap for
+   each text block, and a lighter two-layer halo keeps the letters crisp and is cheaper to repaint while scrolling. */
 @media (max-width: 860px) {
-  .section > .flow-lines { opacity: .28; }
+  .section > .flow-lines { opacity: .7; }
   .section:has(> .flow-lines) :is(.section-head, .process-head, .statement, .faq-grid > div:first-child, .faq-list) {
     text-shadow: 0 0 3px var(--halo), 0 0 10px var(--halo);
   }
