@@ -206,15 +206,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .drawer[open] { clip-path: ellipse(150% 150% at var(--ox) var(--oy)); }
 @starting-style { .drawer[open] { clip-path: ellipse(0% 0% at var(--ox) var(--oy)); } }
 .drawer::backdrop { background: transparent; }
-/* The ByteWave badge on the menu's right edge, centred on the edge so exactly half of it is on screen, its blue
-   ring turning like the hero logo. Its own clipped layer keeps the hidden half from making the menu scroll. */
-.drawer-mark { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
-.drawer-mark .spin-logo {
-  position: absolute; top: 50%; left: 100%; translate: -50% -50%;
-  width: min(72vh / var(--vz, 1), 640px, 80vw); aspect-ratio: 1;
-  filter: drop-shadow(-8px 14px 24px rgb(0 0 0 / .45));
-}
-.drawer-sheet { position: relative; z-index: 1; display: grid; grid-template-rows: auto 1fr auto; width: var(--wrap); max-width: 720px; height: 100%; margin-inline: auto; padding: 24px 0; }
+.drawer-sheet { display: grid; grid-template-rows: auto 1fr auto; width: var(--wrap); max-width: 720px; height: 100%; margin-inline: auto; padding: 24px 0; }
 .drawer-top { display: flex; justify-content: space-between; align-items: center; color: var(--on-dark-3); font-size: .8125rem; }
 .drawer .icon-btn { border-color: var(--line-dark); color: var(--on-dark); }
 .drawer .icon-btn:hover { background: rgb(247 245 241 / .08); }
@@ -222,20 +214,10 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .drawer-nav a {
   display: flex; align-items: baseline; gap: 16px; padding: 10px 0;
   font: 500 clamp(1.75rem, 6vw, 2.25rem)/1.1 var(--display); letter-spacing: -.02em;
-  transition: color var(--fast);
+  border-bottom: 1px solid var(--line-dark);
+  transition: color var(--fast), padding-left .35s var(--ease);
 }
-.drawer-nav a:hover, .drawer-nav a:focus-visible { color: var(--mint); }
-/* Roll stagger (site.js splits each link into letters): every letter is a one-line window holding the letter
-   twice, stacked. On hover the stack slides up one line, letter by letter from the left, so the word rolls over
-   into a fresh copy of itself. */
-.drawer-nav .roll { display: inline-flex; overflow: hidden; line-height: 1.1; padding-bottom: .12em; margin-bottom: -.12em; }   /* room for the tail of g */
-.drawer-nav .roll-ch { display: inline-block; position: relative; white-space: pre; }
-/* The copy waits one line plus the descender room below the letter, so not even its top edge peeks out. */
-.drawer-nav .roll-ch::after { content: attr(data-c); position: absolute; left: 0; top: calc(100% + .12em); }
-@media (prefers-reduced-motion: no-preference) {
-  .drawer-nav .roll-ch { transition: translate .5s cubic-bezier(.7, 0, .2, 1); transition-delay: calc(var(--i, 0) * 28ms); }
-  .drawer-nav a:is(:hover, :focus-visible) .roll-ch { translate: 0 calc(-100% - .12em); }
-}
+.drawer-nav a:hover { padding-left: 8px; color: var(--mint); }
 .drawer-foot { display: grid; gap: 12px; font-size: .875rem; color: var(--on-dark-2); }
 .drawer-foot a { display: flex; align-items: center; gap: 10px; overflow-wrap: anywhere; }
 @media (prefers-reduced-motion: no-preference) {
@@ -1077,14 +1059,6 @@ h2 { font-size: clamp(2.25rem, 4.8vw, 4.25rem); line-height: 1.02; letter-spacin
 .section:has(> .flow-lines) :is(.section-head, .process-head, .statement, .faq-grid > div:first-child, .faq-list) {
   text-shadow: 0 0 2px var(--halo), 0 0 6px var(--halo), 0 0 14px var(--halo), 0 0 22px var(--halo);
 }
-/* Phones: the text fills the screen width, so the lines fade further back (site.js also cuts a solid gap for
-   each text block), and a lighter two-layer halo keeps the letters crisp and is cheaper to repaint while scrolling. */
-@media (max-width: 860px) {
-  .section > .flow-lines { opacity: .28; }
-  .section:has(> .flow-lines) :is(.section-head, .process-head, .statement, .faq-grid > div:first-child, .faq-list) {
-    text-shadow: 0 0 3px var(--halo), 0 0 10px var(--halo);
-  }
-}
 .qa { border-bottom: 1px solid var(--line); interpolate-size: allow-keywords; }
 .qa summary {
   display: flex; justify-content: space-between; align-items: center; gap: 24px;
@@ -1179,8 +1153,11 @@ h2 { font-size: clamp(2.25rem, 4.8vw, 4.25rem); line-height: 1.02; letter-spacin
 .contact-copy { display: grid; justify-items: center; text-align: center; }
 .contact-lead { margin-inline: auto; }
 .contact-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }   /* Start a project (the inquiry form) first, WhatsApp beside it */
-.contact-list { justify-items: center; }
-.contact-list li { justify-content: center; text-align: left; }
+/* The details sit as one block centred under the buttons, with their icons in a single column and the text
+   left-aligned beside them, so every line starts at the same edge. A wrapped address keeps its icon on line one. */
+.contact-list { justify-items: start; width: fit-content; max-width: 100%; margin-inline: auto; }
+.contact-list li { justify-content: flex-start; align-items: flex-start; text-align: left; }
+.contact-list li .i { margin-top: .2em; }
 .contact > .wrap { position: relative; z-index: 1; }
 .contact-ring {
   position: absolute; top: 50%; z-index: 0; width: min(78vh / var(--vz, 1), 760px, 46vw); aspect-ratio: 1;   /* 46vw keeps the rings clear of the centred text */
@@ -1193,7 +1170,6 @@ h2 { font-size: clamp(2.25rem, 4.8vw, 4.25rem); line-height: 1.02; letter-spacin
 @media (prefers-reduced-motion: no-preference) {
   .contact-ring-l .cr-spin { animation: ring-spin 60s linear infinite; }
   .contact-ring-r .cr-spin { animation: ring-spin 60s linear infinite reverse; }
-  .contact-ring .cr-spin.is-gsap { animation: none; }   /* GSAP drives it instead, following the scroll direction */
 }
 @keyframes ring-spin { to { rotate: 360deg; } }
 @media (max-width: 860px) {
@@ -1516,19 +1492,6 @@ html:has(dialog[open]) { overflow: hidden; }
   .start-grid { grid-template-columns: 1fr; }
   .start-intro { position: static; }
   .start-next { max-width: none; }
-  /* Phones and tablets: the intro fills the whole width and there is no empty space for the line to run through,
-     so it would always cross the words. Leave it out here (the star field and glow stay), and give the intro text
-     a soft navy halo so every letter stays crisp over the background. */
-  .start-line { display: none; }
-  .start-intro :is(.label, .start-title, .start-lead, .start-next h2, .start-next p, .start-alt) {
-    text-shadow: 0 0 3px var(--navy-deep), 0 0 10px var(--navy-deep);
-  }
-  /* A live blur behind a form this tall is heavy to repaint on a phone and makes scrolling stutter. A slightly
-     more solid panel reads the same and scrolls smoothly. */
-  .inquiry {
-    -webkit-backdrop-filter: none; backdrop-filter: none;
-    background: linear-gradient(160deg, color-mix(in srgb, rgb(247 245 241) 7%, var(--navy-deep)), color-mix(in srgb, rgb(247 245 241) 3%, var(--navy-deep)) 55%);
-  }
 }
 @media (max-width: 560px) {
   .inquiry .field-row { grid-template-columns: 1fr; }
