@@ -1,0 +1,15 @@
+# GitHub Pages builds this repo with Jekyll. The site is plain HTML, so nothing is templated; this file only keeps
+# files that belong to the repo (old hosting setups, build scripts, notes, unused old code) off the public website.
+# They stay in the repo for whoever needs them.
+exclude:
+  - api/
+  - worker/
+  - scripts/
+  - vercel.json
+  - package.json
+  - implementation.md
+  - README.md
+  - css/style.css
+  - js/main.js
+  - .claude/
+  - .openai/

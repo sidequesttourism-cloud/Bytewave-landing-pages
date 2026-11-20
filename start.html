@@ -2,6 +2,11 @@
 <html lang="en-BN">
 <head>
   <meta charset="utf-8">
+  <!-- Security policy: only code and files from this site may load (the one inline script on index.html is
+       allowed by its hash; if that script is edited, update the sha256 here on every page). Forms may only post
+       here or to Web3Forms. GitHub Pages cannot send HTTP headers, so the policy lives in the page. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-W8H6gi81ipYboDVo/ooT+W/05CnYT8GYpN2mFNCToaY='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://api.web3forms.com; form-action 'self' https://api.web3forms.com; object-src 'none'; base-uri 'self'; frame-src 'none'; worker-src 'self'; manifest-src 'self'; upgrade-insecure-requests">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="index,follow">
   <meta name="theme-color" content="#071c2d">
@@ -16,7 +21,7 @@
   <link rel="stylesheet" href="css/portal.css?v=20261117a">
   <script src="js/portal.js?v=20261117b"></script>
   <link rel="stylesheet" href="css/site.css?v=20261118i">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt" crossorigin="anonymous" defer></script>
+  <script src="js/vendor/gsap.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt" defer></script>
   <script src="js/inquiry.js?v=20261117b" defer></script>
   <script src="js/start.js?v=20261117c" defer></script>
   <script src="js/flowmap.js?v=20261117d" defer></script>
